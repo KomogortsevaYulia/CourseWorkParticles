@@ -1,0 +1,10 @@
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\bin\Debug\Курсовая.exe.config
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\bin\Debug\Курсовая.exe
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\bin\Debug\Курсовая.pdb
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.csprojAssemblyReference.cache
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.Form1.resources
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.Properties.Resources.resources
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.csproj.GenerateResource.cache
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.csproj.CoreCompileInputs.cache
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.exe
+C:\Юлия\Институт\2 курс\Курсовая\TermPaper\Курсовая\obj\Debug\Курсовая.pdb
