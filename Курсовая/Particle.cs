@@ -15,7 +15,10 @@ namespace Курсовая
 
         public float SpeedX; // скорость перемещения по оси X
         public float SpeedY; // скорость перемещения по оси Y
-
+        public string figure = "square";
+        public int rectWidth; // ширина прямоугольника
+        public int rectHeight; // ширина прямоугольника
+        public int rect; // ширина прямоугольника
         // добавили генератор случайных чисел
         public static Random rand = new Random();
 
@@ -23,16 +26,19 @@ namespace Курсовая
         public Particle()
         {
             // генерируем произвольное направление и скорость
-            var direction = (double)rand.Next(360);
-            var speed = 1 + rand.Next(10);
-
-            // рассчитываем вектор скорости
-            SpeedX = (float)(Math.Cos(direction / 180 * Math.PI) * speed);
-            SpeedY = -(float)(Math.Sin(direction / 180 * Math.PI) * speed);
-
+            var direction = (double)rand.Next(360);           
             // а это не трогаем
             Radius = 2 + rand.Next(10);
             Life = 20 + rand.Next(100);
+        }
+        public Particle(Particle particle)
+        {
+            this.X = particle.X;
+            this.Y = particle.Y;
+            this.Radius = particle.Radius;
+            this.SpeedX = particle.SpeedX;
+            this.SpeedY = particle.SpeedY;
+            this.Life = particle.Life;
         }
         public virtual void Draw(Graphics g)
         {
@@ -46,8 +52,8 @@ namespace Курсовая
             var color = Color.FromArgb(alpha, Color.Black);
             var b = new SolidBrush(color);
 
-            // остальное все так же
-            g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            if (figure.Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else if (figure.Equals("square")) g.FillRectangle(b, X, Y, rectWidth, rectHeight);
 
             b.Dispose();
         }
@@ -55,33 +61,64 @@ namespace Курсовая
     }
     public class ParticleColorful : Particle
     {
-        // два новых поля под цвет начальный и конечный
         public Color FromColor;
         public Color ToColor;
 
-        // для смеси цветов
-        public static Color MixColor(Color color1, Color color2, float k)
+        public ParticleColorful() { }
+
+        public ParticleColorful(ParticleColorful particleColorful)
         {
-            return Color.FromArgb(
-                (int)(color2.A * k + color1.A * (1 - k)),
-                (int)(color2.R * k + color1.R * (1 - k)),
-                (int)(color2.G * k + color1.G * (1 - k)),
-                (int)(color2.B * k + color1.B * (1 - k))
-            );
+            this.X = particleColorful.X;
+            this.Y = particleColorful.Y;
+            this.Radius = particleColorful.Radius;
+            this.SpeedX = particleColorful.SpeedX;
+            this.SpeedY = particleColorful.SpeedY;
+            this.Life = particleColorful.Life;
+            this.FromColor = particleColorful.FromColor;
+            this.ToColor = particleColorful.ToColor;
         }
 
-        // ну и отрисовку перепишем
+        public static Color mixColor(Color color1, Color color2, float k)
+        {
+            return Color.FromArgb(
+                    (int)(color2.A * k + color1.A * (1 - k)),
+                    (int)(color2.R * k + color1.R * (1 - k)),
+                    (int)(color2.G * k + color1.G * (1 - k)),
+                    (int)(color2.B * k + color1.B * (1 - k))
+                );
+        }
+
         public override void Draw(Graphics g)
         {
             float k = Math.Min(1f, Life / 100);
 
-            // так как k уменьшается от 1 до 0, то порядок цветов обратный
-            var color = MixColor(ToColor, FromColor, k);
+            var color = mixColor(ToColor, FromColor, k);
             var b = new SolidBrush(color);
 
-            g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            if (figure.Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else if (figure.Equals("square")) g.FillRectangle(b, X, Y, rectWidth, rectHeight);
 
             b.Dispose();
+        }
+
+        public void drawSpeedVectors(Graphics g)
+        {
+            int deviation = (int)SpeedX;
+
+            Pen pen = new Pen(Brushes.Green);
+            if (figure.Equals("circle"))
+            {
+                g.DrawLine(pen, new Point((int)X, (int)Y),
+                new Point((int)(X + deviation),
+                (int)(Y + Radius / 4 * 3)));
+            }
+            else if (figure.Equals("square"))
+            {
+                g.DrawLine(pen, new Point((int)(X + rectWidth / 2), (int)(Y + rectHeight / 2)),
+                new Point((int)(X+ rectWidth / 2 + deviation),
+                (int)(Y+ rectHeight / 4 * 3)));
+            }
+            pen.Dispose();
         }
     }
 }
