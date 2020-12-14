@@ -19,7 +19,14 @@ namespace Курсовая
         public int rect; // ширина прямоугольника
         // добавили генератор случайных чисел
         public static Random rand = new Random();
-
+        public bool ifColoredGreen = false;
+        public bool ifColoredRed = false; 
+        public bool ifColoredYellow = false; 
+        public bool ifColoredBlue = false; 
+        public bool ifColoredOrange = false; 
+        public bool ifColoredBefore = false;
+        public bool ifColoredViolet = false;
+        public bool ifColoredDodgerBlue = false;
         public float Life; // запас здоровья частицы
         public Particle()
         {

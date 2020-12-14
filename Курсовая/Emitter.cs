@@ -32,7 +32,7 @@ namespace Курсовая
         public Color ColorTo = Color.FromArgb(0, Color.Black); // конечный цвет частиц
         public int rect = 50; // значения сторон квадрата
         public string figure = "circle"; // показывает, какая сейчас фигура
-
+        public bool ifColor = false;
         public void check() {
             particles.Clear();
             particlesHistory.Clear();
@@ -67,15 +67,29 @@ namespace Курсовая
                 {
                     i++;
                     particle.Life--;
-                    particle.FromColor = ColorFrom;
-                    particle.ToColor = ColorTo;
+                    
+
                     if (particle.Life < 0)
                     {
-                        if (ParticlesPerTick != 0) { ResetParticle(particle); }
-                        else {
+
+                        if (ParticlesPerTick != 0)
+                        {
+                            ResetParticle(particle);
+                            if (!particle.ifColoredBefore)
+                            {
+                                particle.FromColor = ColorFrom;
+                                particle.ToColor = ColorTo;
+                            }
+                            else
+                            {
+                                particlesRemove.Add(particle);
+                            }
+                        }
+                        else
+                        {
                             particlesRemove.Add(particle);
                         }
-                        if (i % 3 == 0) {
+                        if (i % 3 == 0  ) {
                             particlesRemove.Add(particle);
                         }
                     }
@@ -131,22 +145,53 @@ namespace Курсовая
             tickCount++;
             if (tickCount < 0) tickCount = 0;
         }
-        public void MakeColor(int width) {
-            foreach (var particle in particles) {
-                if (particle.X >= 0 & particle.X <= width / 4 & particle.Y>=100 &particle.Y<=150) {
-                    particle.FromColor = Color.Yellow;
-                }
-                if (particle.X >= width/4 & particle.X <= width / 2 & particle.Y >= 100 & particle.Y <= 150)
+        public void MakeColor(int width)
+        {
+            width = width / 7;
+            foreach (var particle in particles)
+            {
+                if (particle.X >= 0 & particle.X <= width & particle.Y >= 100 & particle.Y <= 140 || particle.ifColoredRed)
                 {
                     particle.FromColor = Color.Red;
+                    particle.ifColoredRed = true;
+                    particle.ifColoredBefore = true;
                 }
-                if (particle.X >= width / 2 & particle.X <= (width / 4)*3 & particle.Y >= 100 & particle.Y <= 150)
+                else if (particle.X >= width  & particle.X <=width*2 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColoredOrange)
+                {
+                    particle.FromColor = Color.Orange;
+                    particle.ifColoredOrange = true;
+                    particle.ifColoredBefore = true;
+                }
+                else if (particle.X >= width*2 & particle.X <= width*3 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColoredYellow)
+                    
+                {
+                    particle.FromColor = Color.Yellow;
+                    particle.ifColoredYellow = true;
+                    particle.ifColoredBefore = true;
+                }
+                else if (particle.X >= width*3 & particle.X <=width*4 & particle.Y >= 130 & particle.Y <= 170 || particle.ifColoredGreen)
                 {
                     particle.FromColor = Color.Green;
+                    particle.ifColoredGreen = true;
+                    particle.ifColoredBefore = true;
                 }
-                if (particle.X >= (width / 4) * 3 & particle.X <= width  & particle.Y >= 100 & particle.Y <= 150)
+                else if (particle.X >= width*4 & particle.X <= width*5 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColoredDodgerBlue)
+                {
+                    particle.FromColor = Color.DodgerBlue;
+                    particle.ifColoredDodgerBlue = true;
+                    particle.ifColoredBefore = true;
+                }
+                else if (particle.X >= width*5 & particle.X <= width*6  & particle.Y >= 110 & particle.Y <= 150 || particle.ifColoredBlue)
                 {
                     particle.FromColor = Color.Blue;
+                    particle.ifColoredBlue = true;
+                    particle.ifColoredBefore = true;
+                }
+                else if (particle.X >= width*6 & particle.X <= width*7 & particle.Y >= 100 & particle.Y <= 140 || particle.ifColoredViolet)
+                {
+                    particle.FromColor = Color.Violet;
+                    particle.ifColoredViolet = true;
+                    particle.ifColoredBefore = true;
                 }
 
             }
@@ -239,6 +284,7 @@ namespace Курсовая
             }
             return null;
         }
+        
     }
     public class TopEmitter : Emitter
     {

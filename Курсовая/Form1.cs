@@ -43,8 +43,8 @@ namespace Курсовая
             {
                 g.Clear(colorPicture);
                 emitter.Render(g);
-                if (ifColor==true) {
-                    
+                if (ifColor == true)
+                {
                     drawPR(g);
                     emitter.MakeColor(picDisplay.Width);
                 }
@@ -56,13 +56,13 @@ namespace Курсовая
                         if (particle.figure == "square")
                         {
                             particle.rect = emitter.rect;
-                            
+
                             drawSquare(g, particle);
                             ShowInfo(g, particle);
                         }
                     }
                 }
-                else
+                else if (emitter.figure == "circle")
                 {
                     Particle particle = emitter.ifInCircle();
                     if (particle != null)
@@ -75,6 +75,7 @@ namespace Курсовая
                         }
                     }
                 }
+                
             }
             picDisplay.Invalidate();
             stepPermission = false;
@@ -84,6 +85,8 @@ namespace Курсовая
             Pen pen = new Pen(Color.Black);
             g.DrawRectangle(pen, particle.X, particle.Y, particle.rect, particle.rect);
         }
+
+        
         private void setTickRate()
         {
             switch (tbSpeed.Value)
@@ -303,11 +306,20 @@ namespace Курсовая
         }
         public void drawPR(Graphics g)
         {
-            Pen pen = new Pen(Color.Yellow);
-            g.DrawRectangle(pen, 0, 100,picDisplay.Width/4, 50);
-            g.DrawRectangle(new Pen(Color.Red), picDisplay.Width / 4, 100, picDisplay.Width / 4, 50);
-            g.DrawRectangle(new Pen(Color.Green), picDisplay.Width / 2, 100, picDisplay.Width / 4, 50);
-            g.DrawRectangle(new Pen(Color.Blue), (picDisplay.Width / 4)*3, 100, picDisplay.Width / 4, 50);
+            g.DrawRectangle(new Pen(Color.Red,3),0, 100, picDisplay.Width / 7, 40);
+
+            g.DrawRectangle(new Pen(Color.Orange, 3), picDisplay.Width / 7, 110, (picDisplay.Width /7), 40);
+
+            g.DrawRectangle(new Pen(Color.Yellow,3), (picDisplay.Width / 7) *2, 120, (picDisplay.Width /7), 40);
+            
+            g.DrawRectangle(new Pen(Color.Green, 3), (picDisplay.Width / 7)*3, 130, (picDisplay.Width / 7), 40);
+
+            g.DrawRectangle(new Pen(Color.DodgerBlue, 3), (picDisplay.Width / 7)*4, 120, picDisplay.Width / 7, 40);
+
+            g.DrawRectangle(new Pen(Color.Blue, 3), (picDisplay.Width /  7)* 5, 110, picDisplay.Width / 7, 40);
+           
+            g.DrawRectangle(new Pen(Color.Violet, 3), (picDisplay.Width /7)*6 , 100, picDisplay.Width / 7, 40);
+            
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -338,7 +350,7 @@ namespace Курсовая
                         emitter.ColorFrom = Color.White;
                         emitter.ColorTo = colorPicture;
                         emitter.LifeMax = 100;
-                        emitter.LifeMin = 50;
+                        emitter.LifeMin =100;
                         emitter.ParticlesPerTick = 10;
                         if (emitter.figure == "circle")
                         {
