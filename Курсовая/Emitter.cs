@@ -13,19 +13,15 @@ namespace Курсовая
         public List<ParticleColorful> particlesRemove = new List<ParticleColorful>();
         public int currentHistoryIndex = 0;
         public bool ifAdd = true; //в первый раз ли достигается последняя граница списка истории
-
         public float gravitationX = 0;
         public float gravitationY = 0;
-
         public int particlesCount = 0;
-
         public int X; // координата X центра эмиттера, будем ее использовать вместо MousePositionX
         public int Y; // соответствующая координата Y 
         public int Direction = 0; // вектор направления в градусах куда сыпет эмиттер
         public int Spreading = 360; // разброс частиц относительно Direction
         public float Speed = 0; // начальная минимальная скорость движения частицы
-        public int RadiusMin = 15; // минимальный радиус частицы
-        public int RadiusMax = 35; // максимальный радиус частицы
+        public int Radius = 15; // минимальный радиус частицы
         public int LifeMin = 30; // минимальное время жизни частицы
         public int LifeMax = 50; // максимальное время жизни частицы
         public int ParticlesPerTick = 1;
@@ -34,11 +30,13 @@ namespace Курсовая
         public int Width; // длина экрана
         public Color ColorFrom = Color.White; // начальный цвет частицы
         public Color ColorTo = Color.FromArgb(0, Color.Black); // конечный цвет частиц
-        public int rectMin = 15, rectMax =50; // значения сторон квадрата
+        public int rect = 50; // значения сторон квадрата
         public string figure = "circle"; // показывает, какая сейчас фигура
 
         public void check() {
             particles.Clear();
+            particlesHistory.Clear();
+            currentHistoryIndex = 0;
         }
         public void UpdateState()
         {
@@ -53,6 +51,9 @@ namespace Курсовая
                         ParticleColorful part = new ParticleColorful(particle);
                         part.FromColor = ColorFrom;
                         part.ToColor = ColorTo;
+                        part.figure = figure;
+                        part.rect = rect;
+                        part.Radius = Radius;
                         particles.Add(part);
                     }
                     currentHistoryIndex++;
@@ -130,6 +131,27 @@ namespace Курсовая
             tickCount++;
             if (tickCount < 0) tickCount = 0;
         }
+        public void MakeColor(int width) {
+            foreach (var particle in particles) {
+                if (particle.X >= 0 & particle.X <= width / 4 & particle.Y>=100 &particle.Y<=150) {
+                    particle.FromColor = Color.Yellow;
+                }
+                if (particle.X >= width/4 & particle.X <= width / 2 & particle.Y >= 100 & particle.Y <= 150)
+                {
+                    particle.FromColor = Color.Red;
+                }
+                if (particle.X >= width / 2 & particle.X <= (width / 4)*3 & particle.Y >= 100 & particle.Y <= 150)
+                {
+                    particle.FromColor = Color.Green;
+                }
+                if (particle.X >= (width / 4) * 3 & particle.X <= width  & particle.Y >= 100 & particle.Y <= 150)
+                {
+                    particle.FromColor = Color.Blue;
+                }
+
+            }
+
+        }
         public virtual ParticleColorful CreateParticle()
         {
             var particle = new ParticleColorful();
@@ -148,6 +170,7 @@ namespace Курсовая
                 X = particle.X,
                 Y = particle.Y,
                 Life = particle.Life,
+                figure = particle.figure
             };
         }
         // добавил новый метод, виртуальным, чтобы переопределять можно было
@@ -163,12 +186,12 @@ namespace Курсовая
             // задаю размеры в зависимости от текущей фигуры
             if (figure.ToLower().Equals("circle"))
             {
-                particle.Radius = Particle.rand.Next(RadiusMin, RadiusMax);
+                particle.Radius =Radius;
                 
             }
             else if (figure.ToLower().Equals("square"))
             {
-                particle.rect = Particle.rand.Next(rectMin, rectMax);
+                particle.rect =rect;
                 
             }
         }

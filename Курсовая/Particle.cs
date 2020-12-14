@@ -16,8 +16,6 @@ namespace Курсовая
         public float SpeedX; // скорость перемещения по оси X
         public float SpeedY; // скорость перемещения по оси Y
         public string figure = "square";
-        public int rectWidth; // ширина прямоугольника
-        public int rectHeight; // ширина прямоугольника
         public int rect; // ширина прямоугольника
         // добавили генератор случайных чисел
         public static Random rand = new Random();
@@ -28,7 +26,7 @@ namespace Курсовая
             // генерируем произвольное направление и скорость
             var direction = (double)rand.Next(360);
 
-            rect = rand.Next(10);
+            rect =20+ rand.Next(100);
             // а это не трогаем
             Radius = 2 + rand.Next(10);
             Life = 20 + rand.Next(100);
@@ -41,6 +39,8 @@ namespace Курсовая
             this.SpeedX = particle.SpeedX;
             this.SpeedY = particle.SpeedY;
             this.Life = particle.Life;
+            this.rect = particle.rect;
+            this.figure = particle.figure;
         }
         public virtual void Draw(Graphics g)
         {

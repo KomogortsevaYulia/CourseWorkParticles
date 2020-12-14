@@ -14,9 +14,10 @@ namespace Курсовая
     {
         Emitter emitter;
         public Color colorPicture=Color.White;
-
         bool ifRun = true;
+        bool ifColor = false;
         bool stepPermission = false;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,11 +29,13 @@ namespace Курсовая
                 Width = picDisplay.Width,
                 gravitationY = 5
             };
+            emitter.rect = tbSize.Value * 10;
+            emitter.Radius = tbSize.Value * 5;
         }
         
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if ((speedBar.Value != 0 && ifRun) || stepPermission)
+            if ((tbSpeed.Value != 0 && ifRun) || stepPermission)
             {
                 emitter.UpdateState();
             }
@@ -40,6 +43,11 @@ namespace Курсовая
             {
                 g.Clear(colorPicture);
                 emitter.Render(g);
+                if (ifColor==true) {
+                    
+                    drawPR(g);
+                    emitter.MakeColor(picDisplay.Width);
+                }
                 if (emitter.figure == "square")
                 {
                     Particle particle = emitter.ifInSquare();
@@ -47,6 +55,8 @@ namespace Курсовая
                     {
                         if (particle.figure == "square")
                         {
+                            particle.rect = emitter.rect;
+                            
                             drawSquare(g, particle);
                             ShowInfo(g, particle);
                         }
@@ -59,6 +69,7 @@ namespace Курсовая
                     {
                         if (particle.figure == "circle")
                         {
+                            particle.Radius = emitter.Radius;
                             DrawCircle(g, particle);
                             ShowInfo(g, particle);
                         }
@@ -70,13 +81,12 @@ namespace Курсовая
         }
         private void drawSquare(Graphics g, Particle particle)
         {
-            Pen pen = new Pen(Color.Red);
+            Pen pen = new Pen(Color.Black);
             g.DrawRectangle(pen, particle.X, particle.Y, particle.rect, particle.rect);
         }
-
         private void setTickRate()
         {
-            switch (speedBar.Value)
+            switch (tbSpeed.Value)
             {
                 case 0:
                     ifRun = false;
@@ -113,11 +123,7 @@ namespace Курсовая
                     break;
             }
         }
-        private void speedBar_ValueChanged(object sender, EventArgs e)
-        {
-            ifRun = true;
-            setTickRate();
-        }
+        
         public void drawSpeedVector()
         {
             Graphics speedVector = picDisplay.CreateGraphics();
@@ -131,16 +137,16 @@ namespace Курсовая
                     (int)(particle.Y + particle.Radius * Math.Sin(deviation - 90))));
             }
         }
-        private void startButton_Click(object sender, EventArgs e)
+        private void Start_Click(object sender, EventArgs e)
         {
             ifRun = true;
             setTickRate();
         }
-        private void stopButton_Click(object sender, EventArgs e)
+        private void Stop_Click(object sender, EventArgs e)
         {
             ifRun = false;
         }
-        private void stepButton_Click(object sender, EventArgs e)
+        private void Step_Click(object sender, EventArgs e)
         {
             ifRun = false;
             if (emitter.currentHistoryIndex < emitter.particlesHistory.Count - 1 && emitter.currentHistoryIndex != 19)
@@ -153,7 +159,8 @@ namespace Курсовая
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
                     part.figure = emitter.figure;
-
+                    part.rect = emitter.rect;
+                    part.Radius = emitter.Radius;
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex++;
@@ -193,35 +200,56 @@ namespace Курсовая
                 particle.Y - particle.Radius
                 );
         }
-        private void backButton_Click(object sender, EventArgs e)
+        private void StepBack_Click(object sender, EventArgs e)
         {
             ifRun = false;
             if (emitter.currentHistoryIndex >= 2)
             {
                 //вернуться на значения из списка
                 emitter.particles.RemoveRange(0, emitter.particles.Count);
-                foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex - 2])
+                foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex - 1])
                 {
                     ParticleColorful part = new ParticleColorful(particle);
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
                     part.figure = emitter.figure;
-                    
+                    part.rect = emitter.rect;
+                    part.Radius = emitter.Radius;
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex--;
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void tbSpeed_ValueChanged(object sender, EventArgs e)
+        {
+            ifRun = true;
+            setTickRate();
+        }
+        private void tbNumber_Scroll_1(object sender, EventArgs e)
+        {
+            emitter.ParticlesPerTick =  tbNumber.Value;
+        }
+        private void tbSize_Scroll(object sender, EventArgs e)
+        {
+            if (emitter.figure == "circle")
+            {
+                emitter.Radius = 5 * tbSize.Value;
+            }
+            else
+            {
+                emitter.rect = 10 * tbSize.Value;
+            }
+        }
+        private void RandomColorParticles_Click(object sender, EventArgs e)
         {
             Random random = new Random();
             int R = random.Next(255);
             int G = random.Next(255);
             int B = random.Next(255);
-            emitter.ColorFrom = Color.FromArgb(R,G ,B);
+            emitter.ColorFrom = Color.FromArgb(R, G, B);
             emitter.ColorTo = colorPicture;
         }
-        private void button2_Click_1(object sender, EventArgs e)
+        private void RandomColorPictures_Click(object sender, EventArgs e)
         {
             Random random = new Random();
             int R = random.Next(255);
@@ -231,46 +259,97 @@ namespace Курсовая
             colorPicture = Color.FromArgb(R, G, B);
             emitter.ColorTo = colorPicture;
         }
-        private void trackBar1_Scroll_1(object sender, EventArgs e)
+        private void ColorParticles_Click(object sender, EventArgs e)
         {
-            emitter.ParticlesPerTick =  trackBar1.Value;
+            ColorDialog MyDialog = new ColorDialog();
+            MyDialog.AllowFullOpen = false;
+            MyDialog.Color = emitter.ColorFrom;
+            if (MyDialog.ShowDialog() == DialogResult.OK)
+                emitter.ColorFrom = MyDialog.Color;
+            emitter.ColorTo = colorPicture;
         }
-        private void trackBar2_Scroll(object sender, EventArgs e)
+        private void ColorPictures_Click(object sender, EventArgs e)
         {
-            if (emitter.figure == "circle")
-            {
-                emitter.RadiusMax = 5 * trackBar2.Value;
-                emitter.RadiusMin = 5 * trackBar2.Value;
-            }
-            else {
-                emitter.rectMax = 10 * trackBar2.Value;
-                emitter.rectMin = 10 * trackBar2.Value;
-            }
+            ColorDialog MyDialog = new ColorDialog();
+            MyDialog.AllowFullOpen = false;
+            MyDialog.Color = colorPicture;
+            if (MyDialog.ShowDialog() == DialogResult.OK)
+                colorPicture = MyDialog.Color;
+            emitter.ColorTo = colorPicture;
+
         }
-        private void hScrollBar2_Scroll(object sender, EventArgs e)
+        private void cmbForm_SelectedIndexChanged(object sender, EventArgs e)
         {
-            emitter.LifeMax = hScrollBar2.Value;
-            if (emitter.LifeMax<= emitter.LifeMin)
-            {
-                emitter.LifeMin =0;
-            }
-            else emitter.LifeMin = emitter.LifeMax / 2;
-        }
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (comboBox1.Text)
+            switch (cmbForm.Text)
             {
                 case "Круг":
-                    emitter.figure= "circle";
+                    emitter.figure = "circle";
                     break;
                 case "Квадрат":
                     emitter.figure = "square";
                     break;
             }
             emitter.check();
-            if ((speedBar.Value != 0 && ifRun) || stepPermission)
+            tbNumber_Scroll_1(sender, e);
+        }
+        private void tbLife_Scroll(object sender, EventArgs e)
+        {
+            emitter.LifeMax =10* tbLife.Value;
+            if (emitter.LifeMax <= emitter.LifeMin)
             {
-                emitter.UpdateState();
+                emitter.LifeMin = 0;
+            }
+            else emitter.LifeMin = emitter.LifeMax / 2;
+        }
+        public void drawPR(Graphics g)
+        {
+            Pen pen = new Pen(Color.Yellow);
+            g.DrawRectangle(pen, 0, 100,picDisplay.Width/4, 50);
+            g.DrawRectangle(new Pen(Color.Red), picDisplay.Width / 4, 100, picDisplay.Width / 4, 50);
+            g.DrawRectangle(new Pen(Color.Green), picDisplay.Width / 2, 100, picDisplay.Width / 4, 50);
+            g.DrawRectangle(new Pen(Color.Blue), (picDisplay.Width / 4)*3, 100, picDisplay.Width / 4, 50);
+        }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (comboBox1.Text) {
+                case "Простой":
+                    {
+                        ifColor = false;
+                        colorPicture = Color.White;
+                        emitter.ColorFrom = Color.Black;
+                        emitter.ColorTo = colorPicture;
+                        emitter.LifeMax = 50;
+                        emitter.LifeMin = 25;
+                        emitter.ParticlesPerTick = 10;
+                        if (emitter.figure == "circle")
+                        {
+                            emitter.Radius = 5 * tbSize.Value;
+                        }
+                        else
+                        {
+                            emitter.rect = 10 * tbSize.Value;
+                        }
+                    }
+                    break;
+                case "Окрашивание":
+                    {
+                        ifColor = true;
+                        colorPicture = Color.Black;
+                        emitter.ColorFrom = Color.White;
+                        emitter.ColorTo = colorPicture;
+                        emitter.LifeMax = 100;
+                        emitter.LifeMin = 50;
+                        emitter.ParticlesPerTick = 10;
+                        if (emitter.figure == "circle")
+                        {
+                            emitter.Radius = 5 * 2;
+                        }
+                        else
+                        {
+                            emitter.rect = 10 * 2;
+                        }
+                    }
+                    break;
             }
         }
     }
