@@ -14,6 +14,7 @@ namespace Курсовая
     {
         Emitter emitter;
         public Color colorPicture=Color.White;
+
         bool ifRun = true;
         bool stepPermission = false;
         public Form1()
@@ -39,11 +40,29 @@ namespace Курсовая
             {
                 g.Clear(colorPicture);
                 emitter.Render(g);
-                Particle particle = emitter.ifInCircle();
-                if (particle != null)
+                if (emitter.figure == "square")
                 {
-                    DrawCircle(g, particle);
-                    ShowCircleInfo(g, particle);
+                    Particle particle = emitter.ifInSquare();
+                    if (particle != null)
+                    {
+                        if (particle.figure == "square")
+                        {
+                            drawSquare(g, particle);
+                            ShowInfo(g, particle);
+                        }
+                    }
+                }
+                else
+                {
+                    Particle particle = emitter.ifInCircle();
+                    if (particle != null)
+                    {
+                        if (particle.figure == "circle")
+                        {
+                            DrawCircle(g, particle);
+                            ShowInfo(g, particle);
+                        }
+                    }
                 }
             }
             picDisplay.Invalidate();
@@ -52,7 +71,7 @@ namespace Курсовая
         private void drawSquare(Graphics g, Particle particle)
         {
             Pen pen = new Pen(Color.Red);
-            g.DrawRectangle(pen, particle.X, particle.Y, particle.rectWidth, particle.rectHeight);
+            g.DrawRectangle(pen, particle.X, particle.Y, particle.rect, particle.rect);
         }
 
         private void setTickRate()
@@ -133,6 +152,8 @@ namespace Курсовая
                     ParticleColorful part = new ParticleColorful(particle);
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
+                    part.figure = emitter.figure;
+
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex++;
@@ -153,7 +174,7 @@ namespace Курсовая
             Pen pen = new Pen(Brushes.Black);
             g.DrawEllipse(pen, particle.X - particle.Radius, particle.Y - particle.Radius, particle.Radius * 2, particle.Radius * 2);
         }
-        private void ShowCircleInfo(Graphics g, Particle particle)
+        private void ShowInfo(Graphics g, Particle particle)
         {
             g.FillRectangle(
                     new SolidBrush(Color.FromArgb(125,Color.White)),
@@ -184,6 +205,8 @@ namespace Курсовая
                     ParticleColorful part = new ParticleColorful(particle);
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
+                    part.figure = emitter.figure;
+                    
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex--;
@@ -214,10 +237,17 @@ namespace Курсовая
         }
         private void trackBar2_Scroll(object sender, EventArgs e)
         {
-            emitter.RadiusMax = 5 * trackBar2.Value;
-            emitter.RadiusMin = 5 * trackBar2.Value;
+            if (emitter.figure == "circle")
+            {
+                emitter.RadiusMax = 5 * trackBar2.Value;
+                emitter.RadiusMin = 5 * trackBar2.Value;
+            }
+            else {
+                emitter.rectMax = 10 * trackBar2.Value;
+                emitter.rectMin = 10 * trackBar2.Value;
+            }
         }
-        private void hScrollBar2_Scroll(object sender, ScrollEventArgs e)
+        private void hScrollBar2_Scroll(object sender, EventArgs e)
         {
             emitter.LifeMax = hScrollBar2.Value;
             if (emitter.LifeMax<= emitter.LifeMin)
@@ -231,11 +261,16 @@ namespace Курсовая
             switch (comboBox1.Text)
             {
                 case "Круг":
-                    emitter.figure = "circle";
+                    emitter.figure= "circle";
                     break;
                 case "Квадрат":
                     emitter.figure = "square";
                     break;
+            }
+            emitter.check();
+            if ((speedBar.Value != 0 && ifRun) || stepPermission)
+            {
+                emitter.UpdateState();
             }
         }
     }

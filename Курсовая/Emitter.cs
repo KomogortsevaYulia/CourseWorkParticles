@@ -37,6 +37,9 @@ namespace Курсовая
         public int rectMin = 15, rectMax =50; // значения сторон квадрата
         public string figure = "circle"; // показывает, какая сейчас фигура
 
+        public void check() {
+            particles.Clear();
+        }
         public void UpdateState()
         {
             if (tickCount % tickRate == 0)
@@ -67,7 +70,7 @@ namespace Курсовая
                     particle.ToColor = ColorTo;
                     if (particle.Life < 0)
                     {
-                        if (ParticlesPerTick != 0 ) { ResetParticle(particle); }
+                        if (ParticlesPerTick != 0) { ResetParticle(particle); }
                         else {
                             particlesRemove.Add(particle);
                         }
@@ -179,6 +182,7 @@ namespace Курсовая
                 if (particle is ParticleColorful) ((ParticleColorful)particle).drawSpeedVectors(g);
                 particle.FromColor = ColorFrom;
                 particle.ToColor = ColorTo;
+                particle.figure = figure;
             }
             
         }
@@ -201,11 +205,11 @@ namespace Курсовая
         {
             foreach (var particle in particles)
             {
-                float centerX = particle.X + particle.rectWidth / 2;
-                float centerY = particle.Y + particle.rectHeight / 2;
+                float centerX = particle.X + particle.rect / 2;
+                float centerY = particle.Y + particle.rect / 2;
                 // проверяю, находится ли точка внутри прямоугольника
-                if (X <= centerX + particle.rectWidth / 2 && X >= centerX - particle.rectWidth / 2 &&
-                    Y <= centerY + particle.rectHeight / 2 && Y >= centerY - particle.rectHeight / 2)
+                if (X <= centerX + particle.rect /2 && X >= centerX - particle.rect /2 &&
+                    Y <= centerY + particle.rect /2 && Y >= centerY - particle.rect/2 )
                 {
                     return particle;
                 }

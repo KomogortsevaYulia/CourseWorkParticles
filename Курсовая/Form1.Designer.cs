@@ -193,7 +193,7 @@
             this.trackBar2.Name = "trackBar2";
             this.trackBar2.Size = new System.Drawing.Size(190, 45);
             this.trackBar2.TabIndex = 3;
-            this.trackBar2.Value = 2;
+            this.trackBar2.Value = 5;
             this.trackBar2.Scroll += new System.EventHandler(this.trackBar2_Scroll);
             // 
             // label5

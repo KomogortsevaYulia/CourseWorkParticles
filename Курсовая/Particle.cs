@@ -26,7 +26,9 @@ namespace Курсовая
         public Particle()
         {
             // генерируем произвольное направление и скорость
-            var direction = (double)rand.Next(360);           
+            var direction = (double)rand.Next(360);
+
+            rect = rand.Next(10);
             // а это не трогаем
             Radius = 2 + rand.Next(10);
             Life = 20 + rand.Next(100);
@@ -52,8 +54,8 @@ namespace Курсовая
             var color = Color.FromArgb(alpha, Color.Black);
             var b = new SolidBrush(color);
 
-            if (figure.Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
-            else if (figure.Equals("square")) g.FillRectangle(b, X, Y, rectWidth, rectHeight);
+            if (figure.ToLower().Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else if (figure.ToLower().Equals("square")) g.FillRectangle(b, X, Y, rect, rect);
 
             b.Dispose();
         }
@@ -71,11 +73,13 @@ namespace Курсовая
             this.X = particleColorful.X;
             this.Y = particleColorful.Y;
             this.Radius = particleColorful.Radius;
+            this.rect = particleColorful.rect;
             this.SpeedX = particleColorful.SpeedX;
             this.SpeedY = particleColorful.SpeedY;
             this.Life = particleColorful.Life;
             this.FromColor = particleColorful.FromColor;
             this.ToColor = particleColorful.ToColor;
+            this.figure = particleColorful.figure;
         }
 
         public static Color mixColor(Color color1, Color color2, float k)
@@ -95,8 +99,8 @@ namespace Курсовая
             var color = mixColor(ToColor, FromColor, k);
             var b = new SolidBrush(color);
 
-            if (figure.Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
-            else if (figure.Equals("square")) g.FillRectangle(b, X, Y, rectWidth, rectHeight);
+            if (figure.ToLower().Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else if (figure.ToLower().Equals("square")) g.FillRectangle(b, X, Y, rect, rect);
 
             b.Dispose();
         }
@@ -106,17 +110,17 @@ namespace Курсовая
             int deviation = (int)SpeedX;
 
             Pen pen = new Pen(Brushes.Green);
-            if (figure.Equals("circle"))
+            if (figure.ToLower().Equals("circle"))
             {
                 g.DrawLine(pen, new Point((int)X, (int)Y),
                 new Point((int)(X + deviation),
                 (int)(Y + Radius / 4 * 3)));
             }
-            else if (figure.Equals("square"))
+            else if (figure.ToLower().Equals("square"))
             {
-                g.DrawLine(pen, new Point((int)(X + rectWidth / 2), (int)(Y + rectHeight / 2)),
-                new Point((int)(X+ rectWidth / 2 + deviation),
-                (int)(Y+ rectHeight / 4 * 3)));
+                g.DrawLine(pen, new Point((int)(X + rect / 2), (int)(Y + rect / 2)),
+                new Point((int)(X+ rect / 2 + deviation),
+                (int)(Y+ rect / 4 * 3)));
             }
             pen.Dispose();
         }
