@@ -12,29 +12,26 @@ namespace Курсовая
         public int Radius; // радиус частицы
         public float X; // X координата положения частицы в пространстве
         public float Y; // Y координата положения частицы в пространстве
-
         public float SpeedX; // скорость перемещения по оси X
         public float SpeedY; // скорость перемещения по оси Y
-        public string figure = "square";
-        public int rect; // ширина прямоугольника
-        // добавили генератор случайных чисел
+        public string Form = "square";
+        public int size; // ширина/высота квадарата
         public static Random rand = new Random();
-        public bool ifColoredGreen = false;
-        public bool ifColoredRed = false; 
-        public bool ifColoredYellow = false; 
-        public bool ifColoredBlue = false; 
-        public bool ifColoredOrange = false; 
-        public bool ifColoredBefore = false;
-        public bool ifColoredViolet = false;
-        public bool ifColoredDodgerBlue = false;
+        public bool ifColorGreen = false;
+        public bool ifColorRed = false; 
+        public bool ifColorYellow = false; 
+        public bool ifColorBlue = false; 
+        public bool ifColorOrange = false; 
+        public bool ifColorBefore = false;
+        public bool ifColorViolet = false;
+        public bool ifColorDodgerBlue = false;
         public float Life; // запас здоровья частицы
         public Particle()
         {
             // генерируем произвольное направление и скорость
             var direction = (double)rand.Next(360);
 
-            rect =20+ rand.Next(100);
-            // а это не трогаем
+            size =20+ rand.Next(100);
             Radius = 2 + rand.Next(10);
             Life = 20 + rand.Next(100);
         }
@@ -46,8 +43,8 @@ namespace Курсовая
             this.SpeedX = particle.SpeedX;
             this.SpeedY = particle.SpeedY;
             this.Life = particle.Life;
-            this.rect = particle.rect;
-            this.figure = particle.figure;
+            this.size = particle.size;
+            this.Form = particle.Form;
         }
         public virtual void Draw(Graphics g)
         {
@@ -61,12 +58,40 @@ namespace Курсовая
             var color = Color.FromArgb(alpha, Color.Black);
             var b = new SolidBrush(color);
 
-            if (figure.ToLower().Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
-            else if (figure.ToLower().Equals("square")) g.FillRectangle(b, X, Y, rect, rect);
-
+            if (Form.ToLower().Equals("circle"))
+                g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else 
+                if (Form.ToLower().Equals("square"))
+                    g.FillRectangle(b, X, Y, size, size);
+                else 
+                    if (Form.ToLower().Equals("star")) 
+                         DrawStar(g); 
             b.Dispose();
         }
-        
+        public void DrawStar(Graphics g)
+        {
+            // рассчитываем коэффициент прозрачности по шкале от 0 до 1.0
+            float k = Math.Min(1f, Life / 100);
+            // рассчитываем значение альфа канала в шкале от 0 до 255
+            // по аналогии с RGB, он используется для задания прозрачности
+            int alpha = (int)(k * 255);
+
+            // создаем цвет из уже существующего, но привязываем к нему еще и значение альфа канала
+            var color = Color.FromArgb(alpha, Color.Black);
+            var b = new SolidBrush(color);
+
+            PointF[] points = new PointF[2 * 5 + 1];
+            double a = 0, da = Math.PI / 5, l;
+            for (int k1 = 0; k1 < 2 * 5 + 1; k1++)
+            {
+                l = k1 % 2 == 0 ? Radius * 2 : Radius;
+                points[k1] = new PointF((float)(X + l * Math.Cos(a)), (float)(Y + l * Math.Sin(a)));
+                a += da;
+            }
+            g.FillPolygon(b,points);
+            b.Dispose();
+        }
+
     }
     public class ParticleColorful : Particle
     {
@@ -80,13 +105,13 @@ namespace Курсовая
             this.X = particleColorful.X;
             this.Y = particleColorful.Y;
             this.Radius = particleColorful.Radius;
-            this.rect = particleColorful.rect;
+            this.size = particleColorful.size;
             this.SpeedX = particleColorful.SpeedX;
             this.SpeedY = particleColorful.SpeedY;
             this.Life = particleColorful.Life;
             this.FromColor = particleColorful.FromColor;
             this.ToColor = particleColorful.ToColor;
-            this.figure = particleColorful.figure;
+            this.Form = particleColorful.Form;
         }
 
         public static Color mixColor(Color color1, Color color2, float k)
@@ -106,28 +131,49 @@ namespace Курсовая
             var color = mixColor(ToColor, FromColor, k);
             var b = new SolidBrush(color);
 
-            if (figure.ToLower().Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
-            else if (figure.ToLower().Equals("square")) g.FillRectangle(b, X, Y, rect, rect);
-
+            if (Form.ToLower().Equals("circle")) g.FillEllipse(b, X - Radius, Y - Radius, Radius * 2, Radius * 2);
+            else if (Form.ToLower().Equals("square")) g.FillRectangle(b, X, Y, size, size);
+            else if(Form.ToLower().Equals("star")) DrawStar1(g);
             b.Dispose();
         }
+        public void DrawStar1(Graphics g) {
+            float k = Math.Min(1f, Life / 100);
 
+            var color = mixColor(ToColor, FromColor, k);
+            var b = new SolidBrush(color);
+            PointF[] points = new PointF[2 * 5 + 1];
+            double a = 0, da = Math.PI / 5, l;
+            for (int k1 = 0; k1 < 2 * 5 + 1; k1++)
+            {
+                l = k1 % 2 == 0 ? Radius * 2 : Radius;
+                points[k1] = new PointF((float)(X + l * Math.Cos(a)), (float)(Y + l * Math.Sin(a)));
+                a += da;
+            }
+            g.FillPolygon(b, points);
+            b.Dispose();
+        }
         public void drawSpeedVectors(Graphics g)
         {
             int deviation = (int)SpeedX;
 
             Pen pen = new Pen(Brushes.Green);
-            if (figure.ToLower().Equals("circle"))
+            if (Form.ToLower().Equals("circle"))
             {
                 g.DrawLine(pen, new Point((int)X, (int)Y),
                 new Point((int)(X + deviation),
                 (int)(Y + Radius / 4 * 3)));
             }
-            else if (figure.ToLower().Equals("square"))
+            else if (Form.ToLower().Equals("square"))
             {
-                g.DrawLine(pen, new Point((int)(X + rect / 2), (int)(Y + rect / 2)),
-                new Point((int)(X+ rect / 2 + deviation),
-                (int)(Y+ rect / 4 * 3)));
+                g.DrawLine(pen, new Point((int)(X + size / 2), (int)(Y + size / 2)),
+                new Point((int)(X+ size / 2 + deviation),
+                (int)(Y+ size / 4 * 3)));
+            }
+            else if (Form.ToLower().Equals("star"))
+            {
+                g.DrawLine(pen, new Point((int)X, (int)Y),
+               new Point((int)(X + deviation),
+               (int)(Y + Radius / 4 * 3)));
             }
             pen.Dispose();
         }

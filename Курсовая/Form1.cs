@@ -53,9 +53,9 @@ namespace Курсовая
                     Particle particle = emitter.ifInSquare();
                     if (particle != null)
                     {
-                        if (particle.figure == "square")
+                        if (particle.Form == "square")
                         {
-                            particle.rect = emitter.rect;
+                            particle.size = emitter.rect;
 
                             drawSquare(g, particle);
                             ShowInfo(g, particle);
@@ -67,7 +67,7 @@ namespace Курсовая
                     Particle particle = emitter.ifInCircle();
                     if (particle != null)
                     {
-                        if (particle.figure == "circle")
+                        if (particle.Form == "circle")
                         {
                             particle.Radius = emitter.Radius;
                             DrawCircle(g, particle);
@@ -75,7 +75,18 @@ namespace Курсовая
                         }
                     }
                 }
-                
+                else {
+                    Particle particle = emitter.ifInStar();
+                    if (particle != null)
+                    {
+                        if (particle.Form == "star")
+                        {
+                            particle.Radius = emitter.Radius;
+                            DrawStar(g, particle);
+                            ShowInfo(g, particle);
+                        }
+                    }
+                }
             }
             picDisplay.Invalidate();
             stepPermission = false;
@@ -83,9 +94,21 @@ namespace Курсовая
         private void drawSquare(Graphics g, Particle particle)
         {
             Pen pen = new Pen(Color.Black);
-            g.DrawRectangle(pen, particle.X, particle.Y, particle.rect, particle.rect);
+            g.DrawRectangle(pen, particle.X, particle.Y, particle.size, particle.size);
         }
-
+        public void DrawStar(Graphics g, Particle particle) {
+            
+            double alpha = 0;        // поворот
+            PointF[] points = new PointF[2 * 5 + 1];
+            double a = alpha, da = Math.PI / 5, l;
+            for (int k = 0; k < 2 * 5 + 1; k++)
+            {
+                l = k % 2 == 0 ? particle.Radius*2 : particle.Radius;
+                points[k] = new PointF((float)(particle.X + l * Math.Cos(a)), (float)(particle.Y + l * Math.Sin(a)));
+                a += da;
+            }
+            g.DrawLines(Pens.Black, points);
+        }
         
         private void setTickRate()
         {
@@ -161,8 +184,8 @@ namespace Курсовая
                     ParticleColorful part = new ParticleColorful(particle);
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
-                    part.figure = emitter.figure;
-                    part.rect = emitter.rect;
+                    part.Form = emitter.figure;
+                    part.size = emitter.rect;
                     part.Radius = emitter.Radius;
                     emitter.particles.Add(part);
                 }
@@ -215,8 +238,8 @@ namespace Курсовая
                     ParticleColorful part = new ParticleColorful(particle);
                     part.FromColor = emitter.ColorFrom;
                     part.ToColor = emitter.ColorTo;
-                    part.figure = emitter.figure;
-                    part.rect = emitter.rect;
+                    part.Form = emitter.figure;
+                    part.size = emitter.rect;
                     part.Radius = emitter.Radius;
                     emitter.particles.Add(part);
                 }
@@ -234,7 +257,7 @@ namespace Курсовая
         }
         private void tbSize_Scroll(object sender, EventArgs e)
         {
-            if (emitter.figure == "circle")
+            if (emitter.figure == "circle"|| emitter.figure == "star" )
             {
                 emitter.Radius = 5 * tbSize.Value;
             }
@@ -291,8 +314,11 @@ namespace Курсовая
                 case "Квадрат":
                     emitter.figure = "square";
                     break;
+                case "Звезда":
+                    emitter.figure = "star";
+                    break;
             }
-            emitter.check();
+            emitter.removeList();
             tbNumber_Scroll_1(sender, e);
         }
         private void tbLife_Scroll(object sender, EventArgs e)
@@ -333,7 +359,7 @@ namespace Курсовая
                         emitter.LifeMax = 50;
                         emitter.LifeMin = 25;
                         emitter.ParticlesPerTick = 10;
-                        if (emitter.figure == "circle")
+                        if (emitter.figure == "circle" || emitter.figure == "star")
                         {
                             emitter.Radius = 5 * tbSize.Value;
                         }
@@ -352,7 +378,7 @@ namespace Курсовая
                         emitter.LifeMax = 100;
                         emitter.LifeMin =100;
                         emitter.ParticlesPerTick = 10;
-                        if (emitter.figure == "circle")
+                        if (emitter.figure == "circle" || emitter.figure == "star")
                         {
                             emitter.Radius = 5 * 2;
                         }

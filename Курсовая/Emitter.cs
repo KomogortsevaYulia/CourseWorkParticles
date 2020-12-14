@@ -33,7 +33,7 @@ namespace Курсовая
         public int rect = 50; // значения сторон квадрата
         public string figure = "circle"; // показывает, какая сейчас фигура
         public bool ifColor = false;
-        public void check() {
+        public void removeList() {
             particles.Clear();
             particlesHistory.Clear();
             currentHistoryIndex = 0;
@@ -51,8 +51,8 @@ namespace Курсовая
                         ParticleColorful part = new ParticleColorful(particle);
                         part.FromColor = ColorFrom;
                         part.ToColor = ColorTo;
-                        part.figure = figure;
-                        part.rect = rect;
+                        part.Form = figure;
+                        part.size = rect;
                         part.Radius = Radius;
                         particles.Add(part);
                     }
@@ -67,15 +67,12 @@ namespace Курсовая
                 {
                     i++;
                     particle.Life--;
-                    
-
                     if (particle.Life < 0)
                     {
-
                         if (ParticlesPerTick != 0)
                         {
                             ResetParticle(particle);
-                            if (!particle.ifColoredBefore)
+                            if (!particle.ifColorBefore)
                             {
                                 particle.FromColor = ColorFrom;
                                 particle.ToColor = ColorTo;
@@ -150,48 +147,48 @@ namespace Курсовая
             width = width / 7;
             foreach (var particle in particles)
             {
-                if (particle.X >= 0 & particle.X <= width & particle.Y >= 100 & particle.Y <= 140 || particle.ifColoredRed)
+                if (particle.X >= 0 & particle.X <= width & particle.Y >= 100 & particle.Y <= 140 || particle.ifColorRed)
                 {
                     particle.FromColor = Color.Red;
-                    particle.ifColoredRed = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorRed = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width  & particle.X <=width*2 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColoredOrange)
+                else if (particle.X >= width  & particle.X <=width*2 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorOrange)
                 {
                     particle.FromColor = Color.Orange;
-                    particle.ifColoredOrange = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorOrange = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*2 & particle.X <= width*3 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColoredYellow)
+                else if (particle.X >= width*2 & particle.X <= width*3 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorYellow)
                     
                 {
                     particle.FromColor = Color.Yellow;
-                    particle.ifColoredYellow = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorYellow = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*3 & particle.X <=width*4 & particle.Y >= 130 & particle.Y <= 170 || particle.ifColoredGreen)
+                else if (particle.X >= width*3 & particle.X <=width*4 & particle.Y >= 130 & particle.Y <= 170 || particle.ifColorGreen)
                 {
                     particle.FromColor = Color.Green;
-                    particle.ifColoredGreen = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorGreen = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*4 & particle.X <= width*5 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColoredDodgerBlue)
+                else if (particle.X >= width*4 & particle.X <= width*5 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorDodgerBlue)
                 {
                     particle.FromColor = Color.DodgerBlue;
-                    particle.ifColoredDodgerBlue = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorDodgerBlue = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*5 & particle.X <= width*6  & particle.Y >= 110 & particle.Y <= 150 || particle.ifColoredBlue)
+                else if (particle.X >= width*5 & particle.X <= width*6  & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorBlue)
                 {
                     particle.FromColor = Color.Blue;
-                    particle.ifColoredBlue = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorBlue = true;
+                    particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*6 & particle.X <= width*7 & particle.Y >= 100 & particle.Y <= 140 || particle.ifColoredViolet)
+                else if (particle.X >= width*6 & particle.X <= width*7 & particle.Y >= 100 & particle.Y <= 140 || particle.ifColorViolet)
                 {
                     particle.FromColor = Color.Violet;
-                    particle.ifColoredViolet = true;
-                    particle.ifColoredBefore = true;
+                    particle.ifColorViolet = true;
+                    particle.ifColorBefore = true;
                 }
 
             }
@@ -202,7 +199,7 @@ namespace Курсовая
             var particle = new ParticleColorful();
             particle.FromColor = ColorFrom;
             particle.ToColor = ColorTo;
-            particle.figure = figure;
+            particle.Form = figure;
             return particle;
         }
         public ParticleColorful createParticleColorful(Particle particle)
@@ -215,7 +212,7 @@ namespace Курсовая
                 X = particle.X,
                 Y = particle.Y,
                 Life = particle.Life,
-                figure = particle.figure
+                Form = particle.Form
             };
         }
         // добавил новый метод, виртуальным, чтобы переопределять можно было
@@ -229,14 +226,14 @@ namespace Курсовая
 
             
             // задаю размеры в зависимости от текущей фигуры
-            if (figure.ToLower().Equals("circle"))
+            if (figure.ToLower().Equals("circle")|| figure.ToLower().Equals("star"))
             {
                 particle.Radius =Radius;
                 
             }
             else if (figure.ToLower().Equals("square"))
             {
-                particle.rect =rect;
+                particle.size =rect;
                 
             }
         }
@@ -250,7 +247,7 @@ namespace Курсовая
                 if (particle is ParticleColorful) ((ParticleColorful)particle).drawSpeedVectors(g);
                 particle.FromColor = ColorFrom;
                 particle.ToColor = ColorTo;
-                particle.figure = figure;
+                particle.Form = figure;
             }
             
         }
@@ -273,18 +270,32 @@ namespace Курсовая
         {
             foreach (var particle in particles)
             {
-                float centerX = particle.X + particle.rect / 2;
-                float centerY = particle.Y + particle.rect / 2;
+                float centerX = particle.X + particle.size / 2;
+                float centerY = particle.Y + particle.size / 2;
                 // проверяю, находится ли точка внутри прямоугольника
-                if (X <= centerX + particle.rect /2 && X >= centerX - particle.rect /2 &&
-                    Y <= centerY + particle.rect /2 && Y >= centerY - particle.rect/2 )
+                if (X <= centerX + particle.size /2 && X >= centerX - particle.size /2 &&
+                    Y <= centerY + particle.size /2 && Y >= centerY - particle.size/2 )
                 {
                     return particle;
                 }
             }
             return null;
         }
-        
+        public Particle ifInStar()
+        {
+            foreach (var particle in particles)
+            {
+                float centerX = particle.X + particle.size / 2;
+                float centerY = particle.Y + particle.size / 2;
+                // проверяю, находится ли точка внутри прямоугольника
+                if (X <= centerX + particle.size / 2 && X >= centerX - particle.size / 2 &&
+                    Y <= centerY + particle.size / 2 && Y >= centerY - particle.size / 2)
+                {
+                    return particle;
+                }
+            }
+            return null;
+        }
     }
     public class TopEmitter : Emitter
     {
