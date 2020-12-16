@@ -150,47 +150,54 @@ namespace Курсовая
                 if (particle.X >= 0 & particle.X <= width & particle.Y >= 100 & particle.Y <= 140 || particle.ifColorRed)
                 {
                     particle.FromColor = Color.Red;
+                    ColorFrom = Color.Red;
                     particle.ifColorRed = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width  & particle.X <=width*2 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorOrange)
+                else if (particle.X >= width & particle.X <= width * 2 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorOrange)
                 {
                     particle.FromColor = Color.Orange;
+                    ColorFrom = Color.Orange;
                     particle.ifColorOrange = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*2 & particle.X <= width*3 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorYellow)
-                    
+                else if (particle.X >= width * 2 & particle.X <= width * 3 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorYellow)
+
                 {
                     particle.FromColor = Color.Yellow;
+                    ColorFrom = Color.Yellow;
                     particle.ifColorYellow = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*3 & particle.X <=width*4 & particle.Y >= 130 & particle.Y <= 170 || particle.ifColorGreen)
+                else if (particle.X >= width * 3 & particle.X <= width * 4 & particle.Y >= 130 & particle.Y <= 170 || particle.ifColorGreen)
                 {
                     particle.FromColor = Color.Green;
+                    ColorFrom = Color.Green;
                     particle.ifColorGreen = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*4 & particle.X <= width*5 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorDodgerBlue)
+                else if (particle.X >= width * 4 & particle.X <= width * 5 & particle.Y >= 120 & particle.Y <= 160 || particle.ifColorDodgerBlue)
                 {
                     particle.FromColor = Color.DodgerBlue;
+                    ColorFrom = Color.DodgerBlue;
                     particle.ifColorDodgerBlue = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*5 & particle.X <= width*6  & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorBlue)
+                else if (particle.X >= width * 5 & particle.X <= width * 6 & particle.Y >= 110 & particle.Y <= 150 || particle.ifColorBlue)
                 {
                     particle.FromColor = Color.Blue;
+                    ColorFrom = Color.Blue;
                     particle.ifColorBlue = true;
                     particle.ifColorBefore = true;
                 }
-                else if (particle.X >= width*6 & particle.X <= width*7 & particle.Y >= 100 & particle.Y <= 140 || particle.ifColorViolet)
+                else if (particle.X >= width * 6 & particle.X <= width * 7 & particle.Y >= 100 & particle.Y <= 140 || particle.ifColorViolet)
                 {
                     particle.FromColor = Color.Violet;
+                    ColorFrom = Color.Violet;
                     particle.ifColorViolet = true;
                     particle.ifColorBefore = true;
                 }
-
+                else ColorFrom = Color.White;
             }
 
         }
@@ -204,6 +211,17 @@ namespace Курсовая
         }
         public ParticleColorful createParticleColorful(Particle particle)
         {
+            Color to, from;
+            if (particle.ifColorBefore)
+            {
+                from = ColorFrom;
+                to = ColorFrom;
+            }
+            else
+            {
+                from = ColorFrom;
+                to = ColorTo;
+            }
             return new ParticleColorful
             {
                 Radius = particle.Radius,
@@ -212,7 +230,9 @@ namespace Курсовая
                 X = particle.X,
                 Y = particle.Y,
                 Life = particle.Life,
-                Form = particle.Form
+                Form = particle.Form,
+                FromColor = from,
+                ToColor = to
             };
         }
         // добавил новый метод, виртуальным, чтобы переопределять можно было
@@ -245,13 +265,21 @@ namespace Курсовая
             {
                 particle.Draw(g);
                 if (particle is ParticleColorful) ((ParticleColorful)particle).drawSpeedVectors(g);
-                particle.FromColor = ColorFrom;
-                particle.ToColor = ColorTo;
+                if (particle.ifColorBefore)
+                {
+                    particle.FromColor = ColorFrom;
+                    particle.ToColor = ColorFrom;
+                }
+                else
+                {
+                    particle.FromColor = ColorFrom;
+                    particle.ToColor = ColorTo;
+                }
                 particle.Form = figure;
             }
             
         }
-        public Particle ifInCircle()
+        public Particle ifMouseInCircle()
         {
             foreach (var particle in particles)
             {
@@ -266,7 +294,7 @@ namespace Курсовая
             }
             return null;
         }
-        public Particle ifInSquare()
+        public Particle ifMouseInSquare()
         {
             foreach (var particle in particles)
             {
@@ -281,7 +309,7 @@ namespace Курсовая
             }
             return null;
         }
-        public Particle ifInStar()
+        public Particle ifMouseInStar()
         {
             foreach (var particle in particles)
             {

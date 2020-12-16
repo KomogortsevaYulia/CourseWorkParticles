@@ -50,21 +50,21 @@ namespace Курсовая
                 }
                 if (emitter.figure == "square")
                 {
-                    Particle particle = emitter.ifInSquare();
+                    Particle particle = emitter.ifMouseInSquare();
                     if (particle != null)
                     {
                         if (particle.Form == "square")
                         {
                             particle.size = emitter.rect;
 
-                            drawSquare(g, particle);
+                            drawSquareStroke(g, particle);
                             ShowInfo(g, particle);
                         }
                     }
                 }
                 else if (emitter.figure == "circle")
                 {
-                    Particle particle = emitter.ifInCircle();
+                    Particle particle = emitter.ifMouseInCircle();
                     if (particle != null)
                     {
                         if (particle.Form == "circle")
@@ -76,7 +76,7 @@ namespace Курсовая
                     }
                 }
                 else {
-                    Particle particle = emitter.ifInStar();
+                    Particle particle = emitter.ifMouseInStar();
                     if (particle != null)
                     {
                         if (particle.Form == "star")
@@ -91,7 +91,7 @@ namespace Курсовая
             picDisplay.Invalidate();
             stepPermission = false;
         }
-        private void drawSquare(Graphics g, Particle particle)
+        private void drawSquareStroke(Graphics g, Particle particle)
         {
             Pen pen = new Pen(Color.Black);
             g.DrawRectangle(pen, particle.X, particle.Y, particle.size, particle.size);
@@ -110,7 +110,7 @@ namespace Курсовая
             g.DrawLines(Pens.Black, points);
         }
         
-        private void setTickRate()
+        private void ChangeTick()
         {
             switch (tbSpeed.Value)
             {
@@ -166,7 +166,7 @@ namespace Курсовая
         private void Start_Click(object sender, EventArgs e)
         {
             ifRun = true;
-            setTickRate();
+            ChangeTick();
         }
         private void Stop_Click(object sender, EventArgs e)
         {
@@ -235,9 +235,17 @@ namespace Курсовая
                 emitter.particles.RemoveRange(0, emitter.particles.Count);
                 foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex - 1])
                 {
+                    
                     ParticleColorful part = new ParticleColorful(particle);
-                    part.FromColor = emitter.ColorFrom;
-                    part.ToColor = emitter.ColorTo;
+                    if (particle.ifColorBefore) { 
+                        part.FromColor = emitter.ColorFrom;
+                        part.ToColor = emitter.ColorFrom;
+                    }
+                    else
+                    {
+                        particle.FromColor = emitter.ColorFrom;
+                        particle.ToColor = emitter.ColorTo;
+                    }
                     part.Form = emitter.figure;
                     part.size = emitter.rect;
                     part.Radius = emitter.Radius;
@@ -249,7 +257,7 @@ namespace Курсовая
         private void tbSpeed_ValueChanged(object sender, EventArgs e)
         {
             ifRun = true;
-            setTickRate();
+            ChangeTick();
         }
         private void tbNumber_Scroll_1(object sender, EventArgs e)
         {
