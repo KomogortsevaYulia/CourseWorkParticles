@@ -313,11 +313,11 @@ namespace Курсовая
         {
             foreach (var particle in particles)
             {
-                float centerX = particle.X + particle.size / 2;
-                float centerY = particle.Y + particle.size / 2;
-                // проверяю, находится ли точка внутри прямоугольника
-                if (X <= centerX + particle.size / 2 && X >= centerX - particle.size / 2 &&
-                    Y <= centerY + particle.size / 2 && Y >= centerY - particle.size / 2)
+                float gX = X - particle.X;
+                float gY = Y - particle.Y;
+
+                double r = Math.Sqrt(gX * gX + gY * gY); // считаем расстояние от центра точки до центра частицы
+                if (r + particle.Radius <= particle.Radius * 2 || r + particle.Radius <= particle.Radius * 2) // если частица оказалось внутри эллипса
                 {
                     return particle;
                 }
