@@ -17,14 +17,7 @@ namespace Курсовая
         public string Form = "square";
         public int size; // ширина/высота квадарата
         public static Random rand = new Random();
-        public bool ifColorGreen = false;
-        public bool ifColorRed = false; 
-        public bool ifColorYellow = false; 
-        public bool ifColorBlue = false; 
-        public bool ifColorOrange = false; 
-        public bool ifColorBefore = false;
-        public bool ifColorViolet = false;
-        public bool ifColorDodgerBlue = false;
+        
         public float Life; // запас здоровья частицы
         public Particle()
         {

@@ -15,26 +15,26 @@ namespace Курсовая
         Emitter emitter;
         public Color colorPicture=Color.White;
         bool ifRun = true;
-        bool ifColor = false;
         bool stepPermission = false;
 
         public Form1()
         {
             InitializeComponent();
-            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
-
+            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);           
+            
             // а тут теперь вручную создаем
-            emitter = new TopEmitter
-            {
-                Width = picDisplay.Width,
-                gravitationY = 5
-            };
+                emitter = new TopEmitter
+                {
+                    Width = picDisplay.Width,
+                    gravitationY = 5
+                };
             emitter.rect = tbSize.Value * 10;
             emitter.Radius = tbSize.Value * 5;
         }
         
         private void timer1_Tick(object sender, EventArgs e)
         {
+            
             if ((tbSpeed.Value != 0 && ifRun) || stepPermission)
             {
                 emitter.UpdateState();
@@ -43,11 +43,7 @@ namespace Курсовая
             {
                 g.Clear(colorPicture);
                 emitter.Render(g);
-                if (ifColor == true)
-                {
-                    drawPR(g);
-                    emitter.MakeColor(picDisplay.Width);
-                }
+               
                 if (emitter.figure == "square")
                 {
                     Particle particle = emitter.ifMouseInSquare();
@@ -109,7 +105,6 @@ namespace Курсовая
             }
             g.DrawLines(Pens.Black, points);
         }
-        
         private void ChangeTick()
         {
             switch (tbSpeed.Value)
@@ -149,7 +144,6 @@ namespace Курсовая
                     break;
             }
         }
-        
         public void drawSpeedVector()
         {
             Graphics speedVector = picDisplay.CreateGraphics();
@@ -182,11 +176,6 @@ namespace Курсовая
                 foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex + 1])
                 {
                     ParticleColorful part = new ParticleColorful(particle);
-                    part.FromColor = emitter.ColorFrom;
-                    part.ToColor = emitter.ColorTo;
-                    part.Form = emitter.figure;
-                    part.size = emitter.rect;
-                    part.Radius = emitter.Radius;
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex++;
@@ -237,18 +226,7 @@ namespace Курсовая
                 {
                     
                     ParticleColorful part = new ParticleColorful(particle);
-                    if (particle.ifColorBefore) { 
-                        part.FromColor = emitter.ColorFrom;
-                        part.ToColor = emitter.ColorFrom;
-                    }
-                    else
-                    {
-                        particle.FromColor = emitter.ColorFrom;
-                        particle.ToColor = emitter.ColorTo;
-                    }
-                    part.Form = emitter.figure;
-                    part.size = emitter.rect;
-                    part.Radius = emitter.Radius;
+                    
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex--;
@@ -326,76 +304,91 @@ namespace Курсовая
                     emitter.figure = "star";
                     break;
             }
-            emitter.removeList();
+            emitter.particles.Clear();
+            emitter.particlesHistory.Clear();
+            emitter.currentHistoryIndex = 0;
             tbNumber_Scroll_1(sender, e);
         }
         private void tbLife_Scroll(object sender, EventArgs e)
         {
-            emitter.LifeMax =10* tbLife.Value;
-            if (emitter.LifeMax <= emitter.LifeMin)
-            {
-                emitter.LifeMin = 0;
-            }
-            else emitter.LifeMin = emitter.LifeMax / 2;
-        }
-        public void drawPR(Graphics g)
-        {
-            g.DrawRectangle(new Pen(Color.Red,3),0, 100, picDisplay.Width / 7, 40);
-
-            g.DrawRectangle(new Pen(Color.Orange, 3), picDisplay.Width / 7, 110, (picDisplay.Width /7), 40);
-
-            g.DrawRectangle(new Pen(Color.Yellow,3), (picDisplay.Width / 7) *2, 120, (picDisplay.Width /7), 40);
-            
-            g.DrawRectangle(new Pen(Color.Green, 3), (picDisplay.Width / 7)*3, 130, (picDisplay.Width / 7), 40);
-
-            g.DrawRectangle(new Pen(Color.DodgerBlue, 3), (picDisplay.Width / 7)*4, 120, picDisplay.Width / 7, 40);
-
-            g.DrawRectangle(new Pen(Color.Blue, 3), (picDisplay.Width /  7)* 5, 110, picDisplay.Width / 7, 40);
-           
-            g.DrawRectangle(new Pen(Color.Violet, 3), (picDisplay.Width /7)*6 , 100, picDisplay.Width / 7, 40);
-            
+            emitter.Life =10* tbLife.Value;
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (comboBox1.Text) {
-                case "Простой":
+            case "Простой":
+                {
+                    emitter.impactPoints.Clear();
+                }
+                break;
+            case "Окрашивание":
+                {
+                    float w = picDisplay.Width / 7;
+                    emitter.impactPoints.Add(new ColorPoint
+                    { 
+                        colorSquare=Color.Red,
+                        thickness=4,
+                        XBegin=0,
+                        YBegin=100,
+                        height=40,
+                        width=w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
                     {
-                        ifColor = false;
-                        colorPicture = Color.White;
-                        emitter.ColorFrom = Color.Black;
-                        emitter.ColorTo = colorPicture;
-                        emitter.LifeMax = 50;
-                        emitter.LifeMin = 25;
-                        emitter.ParticlesPerTick = 10;
-                        if (emitter.figure == "circle" || emitter.figure == "star")
-                        {
-                            emitter.Radius = 5 * tbSize.Value;
-                        }
-                        else
-                        {
-                            emitter.rect = 10 * tbSize.Value;
-                        }
-                    }
-                    break;
-                case "Окрашивание":
+                        colorSquare = Color.Orange,
+                        thickness = 4,
+                        XBegin = w+4,
+                        YBegin = 100,
+                        height = 40,
+                        width =w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
                     {
-                        ifColor = true;
-                        colorPicture = Color.Black;
-                        emitter.ColorFrom = Color.White;
-                        emitter.ColorTo = colorPicture;
-                        emitter.LifeMax = 100;
-                        emitter.LifeMin =100;
-                        emitter.ParticlesPerTick = 10;
-                        if (emitter.figure == "circle" || emitter.figure == "star")
-                        {
-                            emitter.Radius = 5 * 2;
-                        }
-                        else
-                        {
-                            emitter.rect = 10 * 2;
-                        }
-                    }
-                    break;
+                        colorSquare = Color.Yellow,
+                        thickness = 4,
+                        XBegin = w*2+4,
+                        YBegin = 100,
+                        height = 40,
+                        width = w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
+                    {
+                        colorSquare = Color.Green,
+                        thickness = 4,
+                        XBegin = w*3+4,
+                        YBegin = 100,
+                        height = 40,
+                        width = w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
+                    {
+                        colorSquare = Color.DodgerBlue,
+                        thickness = 4,
+                        XBegin  = w*4+4,
+                        YBegin = 100,
+                        height = 40,
+                        width = w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
+                    {
+                        colorSquare = Color.Blue,
+                        thickness = 4,
+                        XBegin = w*5+4,
+                        YBegin = 100,
+                        height = 40,
+                        width = w
+                    });
+                    emitter.impactPoints.Add(new ColorPoint
+                    {
+                        colorSquare = Color.Violet,
+                        thickness = 4,
+                        XBegin = w*6+4,
+                        YBegin = 100,
+                        height = 40,
+                        width = w
+                    });
+                }
+                break;            
             }
         }
     }
