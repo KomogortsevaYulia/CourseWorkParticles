@@ -195,7 +195,8 @@
             this.cmbForm.Items.AddRange(new object[] {
             "Круг",
             "Квадрат",
-            "Звезда"});
+            "Звезда",
+            "Снежинки"});
             this.cmbForm.Location = new System.Drawing.Point(151, 38);
             this.cmbForm.Name = "cmbForm";
             this.cmbForm.Size = new System.Drawing.Size(121, 21);

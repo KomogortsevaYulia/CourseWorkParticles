@@ -14,8 +14,8 @@ namespace Курсовая
         public List<ParticleColorful> particlesRemove = new List<ParticleColorful>();
         public int currentHistoryIndex = 0;
         public bool ifAdd = true; //в первый раз ли достигается последняя граница списка истории
-        public float gravitationX = 0;
-        public float gravitationY = 0;
+        public int gravitationX = 0;
+        public int gravitationY = 0;
         public int particlesCount ;
         public int Direction = 0; // вектор направления в градусах куда сыпет эмиттер
         public int Spreading = 360; // разброс частиц относительно Direction
@@ -137,6 +137,11 @@ namespace Курсовая
                     particle = new ParticleStar();
                     break;
                 }
+            case "snowflake":
+                {
+                    particle = new ParticleSnowflake();
+                    break;
+                }
             }
             particle.FromColor = ColorFrom;
             particle.ToColor = ColorTo;
@@ -148,7 +153,7 @@ namespace Курсовая
             particle.Life = Life;
             var direction = Direction + (double)Particle.rand.Next(Spreading) - Spreading / 2;
             particle.SpeedX = (int)(Math.Cos(direction / 180 * Math.PI) * Speed);
-            particle.SpeedY = -(float)(Math.Sin(direction / 180 * Math.PI) * Speed);
+            particle.SpeedY = -(int)(Math.Sin(direction / 180 * Math.PI) * Speed);
             particle.Size =Size;  
         }
         public void Render(Graphics g)

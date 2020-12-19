@@ -212,6 +212,9 @@ namespace Курсовая
                 case "Звезда":
                     emitter.figure = "star";
                     break;
+                case "Снежинки":
+                    emitter.figure = "snowflake";
+                    break;
             }
             emitter.particles.Clear();
             emitter.particlesHistory.Clear();

@@ -10,10 +10,10 @@ namespace Курсовая
     public class Particle
     {
         public int Size; // радиус частицы
-        public float X; // X координата положения частицы в пространстве
-        public float Y; // Y координата положения частицы в пространстве
-        public float SpeedX; // скорость перемещения по оси X
-        public float SpeedY; // скорость перемещения по оси Y
+        public int X; // X координата положения частицы в пространстве
+        public int Y; // Y координата положения частицы в пространстве
+        public int SpeedX; // скорость перемещения по оси X
+        public int SpeedY; // скорость перемещения по оси Y
         public static Random rand = new Random();
         public float Life; // запас здоровья частицы
         public Color FromColor;
@@ -41,14 +41,14 @@ namespace Курсовая
             return false;
         }
         public virtual Particle Clone() {
-            return new Particle { 
-                Size=this.Size,
-                SpeedX=this.SpeedX,
-                SpeedY=this.SpeedY,
-                X=this.X,
-                Y=this.Y,
-                Life=this.Life
-            };
+            ParticleColorful instanse = (ParticleColorful)Activator.CreateInstance(this.GetType());
+            instanse.Size = this.Size;
+            instanse.SpeedX = this.SpeedX;
+            instanse.SpeedY = this.SpeedY;
+            instanse.X = this.X;
+            instanse.Y = this.Y;
+            instanse.Life = this.Life;
+            return instanse;
         }
         public void ShowInfo(Graphics g)
         {
@@ -75,17 +75,16 @@ namespace Курсовая
         public ParticleColorful() { }
         public override Particle Clone()
         {
-            return new ParticleColorful
-            {
-                Size = this.Size,
-                SpeedX = this.SpeedX,
-                SpeedY = this.SpeedY,
-                X = this.X,
-                Y = this.Y,
-                Life = this.Life,
-                ToColor=this.ToColor,
-                FromColor=this.FromColor
-            };
+            ParticleColorful instanse = (ParticleColorful)Activator.CreateInstance(this.GetType());
+            instanse.Size = this.Size;
+            instanse.SpeedX = this.SpeedX;
+            instanse.SpeedY = this.SpeedY;
+            instanse.X = this.X;
+            instanse.Y = this.Y;
+            instanse.Life = this.Life;
+            instanse.FromColor = this.FromColor;
+            instanse.ToColor = this.ToColor;
+            return instanse;
         }
         public ParticleColorful(ParticleColorful particleColorful)
         {
@@ -136,20 +135,6 @@ namespace Курсовая
             }
             return false;
         }
-        public override Particle Clone()
-        {
-            return new ParticleCircle
-            {
-                Size = this.Size,
-                SpeedX = this.SpeedX,
-                SpeedY = this.SpeedY,
-                X = this.X,
-                Y = this.Y,
-                Life = this.Life,
-                ToColor = this.ToColor,
-                FromColor = this.FromColor
-            };
-        }
     }
     public class ParticleSquare : ParticleColorful
     {
@@ -179,20 +164,6 @@ namespace Курсовая
                 return true;
             }
             return false;
-        }
-        public override Particle Clone()
-        {
-            return new ParticleSquare
-            {
-                Size = this.Size,
-                SpeedX = this.SpeedX,
-                SpeedY = this.SpeedY,
-                X = this.X,
-                Y = this.Y,
-                Life = this.Life,
-                ToColor = this.ToColor,
-                FromColor = this.FromColor
-            };
         }
     }
     public class ParticleStar : ParticleColorful
@@ -240,20 +211,64 @@ namespace Курсовая
             }
             return false;
         }
+    }
+    public class ParticleSnowflake : ParticleColorful
+    {
+        public float thicknessLines;
         public override Particle Clone()
         {
-            return new ParticleStar
-            {
-                Size = this.Size,
-                SpeedX = this.SpeedX,
-                SpeedY = this.SpeedY,
-                X = this.X,
-                Y = this.Y,
-                Life = this.Life,
-                ToColor = this.ToColor,
-                FromColor = this.FromColor
+            ParticleSnowflake instanse = (ParticleSnowflake)Activator.CreateInstance(this.GetType());
+            instanse.Size = this.Size;
+            instanse.SpeedX = this.SpeedX;
+            instanse.SpeedY = this.SpeedY;
+            instanse.X = this.X;
+            instanse.Y = this.Y;
+            instanse.Life = this.Life;
+            instanse.FromColor = this.FromColor;
+            instanse.ToColor = this.ToColor;
+            instanse.thicknessLines = this.thicknessLines;
+            return instanse;
+        }
+        public override void Draw(Graphics g)
+        {
+            thicknessLines = Size / 15;
+            Point[] points ={
+                 new Point(X,  Y),new Point(X+Size, Y),
+                 new Point(X,  Y),new Point(X-Size,Y),
+                 new Point(X,  Y),new Point(X, Y+Size),
+                 new Point(X,  Y),new Point(X,  Y-Size),
+                 new Point(X,  Y),new Point(X+(Size/2), Y+(Size/2)),
+                 new Point(X,  Y),new Point(X-(Size/2),  Y+(Size/2)),
+                 new Point(X,  Y),new Point(X+(Size/2),Y-(Size/2)),
+                 new Point(X,  Y),new Point(X-(Size/2), Y-(Size/2)),
             };
+            float k = Math.Min(1f, Life / 100);
+            //Draw lines to screen.
+            g.DrawLines(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), points);
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X, Y - (Size / 2)),new Point(X - (Size / 2), Y - Size));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X, Y - (Size / 2)), new Point(X + (Size / 2), Y - Size));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X, Y + (Size / 2)),new Point(X - (Size / 2), Y + Size));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X, Y + (Size / 2)), new Point(X + (Size / 2), Y + Size));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X+ (Size / 2), Y ), new Point(X + Size, Y + (Size/2)));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X + (Size / 2), Y), new Point(X + Size, Y - (Size / 2)));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X - (Size / 2), Y), new Point(X - Size, Y + (Size / 2)));
+            g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X - (Size / 2), Y), new Point(X - Size, Y - (Size / 2)));
+            g.DrawLine(new Pen(Brushes.Green, thicknessLines), new Point((int)X, (int)Y),new Point((int)(X + (int)SpeedX), (int)(Y + Size )));
+        }
+        public override void DrawFrame(Graphics g)
+        {
+           
+        }
+        public override bool ifMouseInFigure(Graphics g, int xMouse, int yMouse)
+        {
+           
+            // проверяю, находится ли точка внутри прямоугольника
+            if (xMouse <= this.X+Size  && xMouse >= this.X - Size  &&
+                yMouse <= this.Y+Size  && yMouse >= this.Y - Size )
+            {
+                return true;
+            }
+            return false;
         }
     }
-
 }
