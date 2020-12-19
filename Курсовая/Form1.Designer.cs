@@ -196,7 +196,7 @@
             "Круг",
             "Квадрат",
             "Звезда"});
-            this.cmbForm.Location = new System.Drawing.Point(132, 28);
+            this.cmbForm.Location = new System.Drawing.Point(151, 38);
             this.cmbForm.Name = "cmbForm";
             this.cmbForm.Size = new System.Drawing.Size(121, 21);
             this.cmbForm.TabIndex = 30;
@@ -276,7 +276,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.SystemColors.Control;
-            this.label2.Location = new System.Drawing.Point(221, 217);
+            this.label2.Location = new System.Drawing.Point(337, 227);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(181, 13);
             this.label2.TabIndex = 34;
@@ -295,7 +295,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(148, 3);
+            this.label8.Location = new System.Drawing.Point(167, 13);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(84, 13);
             this.label8.TabIndex = 31;
@@ -307,7 +307,7 @@
             this.tbLife.Name = "tbLife";
             this.tbLife.Size = new System.Drawing.Size(186, 45);
             this.tbLife.TabIndex = 32;
-            this.tbLife.Value = 1;
+            this.tbLife.Value = 7;
             this.tbLife.Scroll += new System.EventHandler(this.tbLife_Scroll);
             // 
             // StepBack

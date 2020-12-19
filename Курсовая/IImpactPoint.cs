@@ -16,7 +16,6 @@ namespace Курсовая
         public Color colorSquare;
         // абстрактный метод с помощью которого будем изменять состояние частиц
         public abstract void ImpactParticle(ParticleColorful particle);
-
         // базовый класс для отрисовки прямоугольников
         public virtual void Render(Graphics g)
         {

@@ -16,20 +16,23 @@ namespace Курсовая
         public Color colorPicture=Color.White;
         bool ifRun = true;
         bool stepPermission = false;
+        int xMouse;
+        int yMouse;
 
         public Form1()
         {
             InitializeComponent();
-            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);           
-            
+            picDisplay.Image = new Bitmap(picDisplay.Width, picDisplay.Height);
             // а тут теперь вручную создаем
-                emitter = new TopEmitter
-                {
-                    Width = picDisplay.Width,
-                    gravitationY = 5
-                };
-            emitter.rect = tbSize.Value * 10;
-            emitter.Radius = tbSize.Value * 5;
+            emitter = new TopEmitter
+            {
+                Width = picDisplay.Width,
+                gravitationY = 5
+            };
+            emitter.Size = tbSize.Value * 5;
+            emitter.Life = 10 * tbLife.Value;
+            emitter.ParticlesPerTick = tbNumber.Value;
+            emitter.figure = "circle";
         }
         
         private void timer1_Tick(object sender, EventArgs e)
@@ -43,67 +46,17 @@ namespace Курсовая
             {
                 g.Clear(colorPicture);
                 emitter.Render(g);
-               
-                if (emitter.figure == "square")
+                foreach (var particle in emitter.particles)
                 {
-                    Particle particle = emitter.ifMouseInSquare();
-                    if (particle != null)
+                    if (particle.ifMouseInFigure(g, xMouse ,yMouse))
                     {
-                        if (particle.Form == "square")
-                        {
-                            particle.size = emitter.rect;
-
-                            drawSquareStroke(g, particle);
-                            ShowInfo(g, particle);
-                        }
-                    }
-                }
-                else if (emitter.figure == "circle")
-                {
-                    Particle particle = emitter.ifMouseInCircle();
-                    if (particle != null)
-                    {
-                        if (particle.Form == "circle")
-                        {
-                            particle.Radius = emitter.Radius;
-                            DrawCircle(g, particle);
-                            ShowInfo(g, particle);
-                        }
-                    }
-                }
-                else {
-                    Particle particle = emitter.ifMouseInStar();
-                    if (particle != null)
-                    {
-                        if (particle.Form == "star")
-                        {
-                            particle.Radius = emitter.Radius;
-                            DrawStar(g, particle);
-                            ShowInfo(g, particle);
-                        }
+                        particle.DrawFrame(g);
+                        particle.ShowInfo(g);
                     }
                 }
             }
             picDisplay.Invalidate();
             stepPermission = false;
-        }
-        private void drawSquareStroke(Graphics g, Particle particle)
-        {
-            Pen pen = new Pen(Color.Black);
-            g.DrawRectangle(pen, particle.X, particle.Y, particle.size, particle.size);
-        }
-        public void DrawStar(Graphics g, Particle particle) {
-            
-            double alpha = 0;        // поворот
-            PointF[] points = new PointF[2 * 5 + 1];
-            double a = alpha, da = Math.PI / 5, l;
-            for (int k = 0; k < 2 * 5 + 1; k++)
-            {
-                l = k % 2 == 0 ? particle.Radius*2 : particle.Radius;
-                points[k] = new PointF((float)(particle.X + l * Math.Cos(a)), (float)(particle.Y + l * Math.Sin(a)));
-                a += da;
-            }
-            g.DrawLines(Pens.Black, points);
         }
         private void ChangeTick()
         {
@@ -144,19 +97,8 @@ namespace Курсовая
                     break;
             }
         }
-        public void drawSpeedVector()
-        {
-            Graphics speedVector = picDisplay.CreateGraphics();
 
-            foreach (var particle in emitter.particles)
-            {
-                int deviation = (int)(particle.SpeedX * 9);
-                Pen pen = new Pen(Brushes.Green);
-                speedVector.DrawLine(pen, new Point((int)particle.X, (int)particle.Y),
-                    new Point((int)(particle.X + particle.Radius * Math.Cos(deviation - 90)),
-                    (int)(particle.Y + particle.Radius * Math.Sin(deviation - 90))));
-            }
-        }
+        //кнопочки 
         private void Start_Click(object sender, EventArgs e)
         {
             ifRun = true;
@@ -188,45 +130,19 @@ namespace Курсовая
         }
         private void picDisplay_MouseMove(object sender, MouseEventArgs e)
         {
-            emitter.X = e.X;
-            emitter.Y = e.Y;
-        }
-        private void DrawCircle(Graphics g, Particle particle)
-        {
-            Pen pen = new Pen(Brushes.Black);
-            g.DrawEllipse(pen, particle.X - particle.Radius, particle.Y - particle.Radius, particle.Radius * 2, particle.Radius * 2);
-        }
-        private void ShowInfo(Graphics g, Particle particle)
-        {
-            g.FillRectangle(
-                    new SolidBrush(Color.FromArgb(125,Color.White)),
-                    particle.X,
-                    particle.Y - particle.Radius,
-                    60,
-                    50
-                    );
-            g.DrawString(
-                $"X : {particle.X}\n" +
-                $"Y : {particle.Y}\n" +
-                $"Life : {particle.Life}",
-                new Font("Verdana", 10),
-                new SolidBrush(Color.Black),
-                particle.X,
-                particle.Y - particle.Radius
-                );
+            xMouse = e.X;
+            yMouse = e.Y;
         }
         private void StepBack_Click(object sender, EventArgs e)
         {
             ifRun = false;
-            if (emitter.currentHistoryIndex >= 2)
+            if (emitter.currentHistoryIndex >= 1)
             {
                 //вернуться на значения из списка
                 emitter.particles.RemoveRange(0, emitter.particles.Count);
                 foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex - 1])
                 {
-                    
-                    ParticleColorful part = new ParticleColorful(particle);
-                    
+                    ParticleColorful part = (ParticleColorful)particle.Clone();
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex--;
@@ -243,14 +159,7 @@ namespace Курсовая
         }
         private void tbSize_Scroll(object sender, EventArgs e)
         {
-            if (emitter.figure == "circle"|| emitter.figure == "star" )
-            {
-                emitter.Radius = 5 * tbSize.Value;
-            }
-            else
-            {
-                emitter.rect = 10 * tbSize.Value;
-            }
+            emitter.Size = 5 * tbSize.Value;
         }
         private void RandomColorParticles_Click(object sender, EventArgs e)
         {
