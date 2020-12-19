@@ -10,7 +10,7 @@ namespace Курсовая
     {
         public List<IImpactPoint> impactPoints = new List<IImpactPoint>(); 
         public List<ParticleColorful> particles = new List<ParticleColorful>();
-        public List<List<ParticleColorful>> particlesHistory = new List<List<ParticleColorful>>(20);
+        public List<List<ParticleColorful>> particlesHistory = new List<List<ParticleColorful>>(40);
         public List<ParticleColorful> particlesRemove = new List<ParticleColorful>();
         public int currentHistoryIndex = 0;
         public bool ifAdd = true; //в первый раз ли достигается последняя граница списка истории
@@ -87,7 +87,7 @@ namespace Курсовая
                     ResetParticle(particle);
                     particles.Add(particle);
                 }
-                if (currentHistoryIndex < 19)
+                if (currentHistoryIndex < 39)
                 {
                     if (currentHistoryIndex >= particlesHistory.Count)
                     {

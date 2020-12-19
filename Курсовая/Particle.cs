@@ -16,7 +16,8 @@ namespace Курсовая
         public float SpeedY; // скорость перемещения по оси Y
         public static Random rand = new Random();
         public float Life; // запас здоровья частицы
-
+        public Color FromColor;
+        public Color ToColor;
         public Particle()
         {
             // генерируем произвольное направление и скорость
@@ -71,8 +72,6 @@ namespace Курсовая
     }
     public class ParticleColorful : Particle
     {
-        public Color FromColor;
-        public Color ToColor;
         public ParticleColorful() { }
         public override Particle Clone()
         {
@@ -137,6 +136,20 @@ namespace Курсовая
             }
             return false;
         }
+        public override Particle Clone()
+        {
+            return new ParticleCircle
+            {
+                Size = this.Size,
+                SpeedX = this.SpeedX,
+                SpeedY = this.SpeedY,
+                X = this.X,
+                Y = this.Y,
+                Life = this.Life,
+                ToColor = this.ToColor,
+                FromColor = this.FromColor
+            };
+        }
     }
     public class ParticleSquare : ParticleColorful
     {
@@ -166,6 +179,20 @@ namespace Курсовая
                 return true;
             }
             return false;
+        }
+        public override Particle Clone()
+        {
+            return new ParticleSquare
+            {
+                Size = this.Size,
+                SpeedX = this.SpeedX,
+                SpeedY = this.SpeedY,
+                X = this.X,
+                Y = this.Y,
+                Life = this.Life,
+                ToColor = this.ToColor,
+                FromColor = this.FromColor
+            };
         }
     }
     public class ParticleStar : ParticleColorful
@@ -213,5 +240,20 @@ namespace Курсовая
             }
             return false;
         }
+        public override Particle Clone()
+        {
+            return new ParticleStar
+            {
+                Size = this.Size,
+                SpeedX = this.SpeedX,
+                SpeedY = this.SpeedY,
+                X = this.X,
+                Y = this.Y,
+                Life = this.Life,
+                ToColor = this.ToColor,
+                FromColor = this.FromColor
+            };
+        }
     }
+
 }

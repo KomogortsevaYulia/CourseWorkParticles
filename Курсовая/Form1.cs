@@ -117,7 +117,7 @@ namespace Курсовая
                 emitter.particles.RemoveRange(0, emitter.particles.Count);
                 foreach (ParticleColorful particle in emitter.particlesHistory[emitter.currentHistoryIndex + 1])
                 {
-                    ParticleColorful part = new ParticleColorful(particle);
+                    ParticleColorful part = (ParticleColorful)particle.Clone();
                     emitter.particles.Add(part);
                 }
                 emitter.currentHistoryIndex++;
