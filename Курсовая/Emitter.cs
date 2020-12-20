@@ -13,60 +13,54 @@ namespace Курсовая
         public List<List<ParticleColorful>> particlesHistory = new List<List<ParticleColorful>>(40);
         public List<ParticleColorful> particlesRemove = new List<ParticleColorful>();
         public int currentHistoryIndex = 0;
-        public bool ifAdd = true; //в первый раз ли достигается последняя граница списка истории
+        public bool ifAdd = true;           //в первый раз ли достигается последняя граница списка истории
         public int gravitationX = 0;
         public int gravitationY = 0;
         public int particlesCount ;
-        public int Direction = 0; // вектор направления в градусах куда сыпет эмиттер
-        public int Spreading = 360; // разброс частиц относительно Direction
-        public float Speed = 0; // начальная минимальная скорость движения частицы
-        public int Size ; // минимальный радиус частицы
-        public int Life ; // минимальное время жизни частицы
+        public int Direction = 0;               // вектор направления в градусах куда сыпет эмиттер
+        public int Spreading = 360;             // разброс частиц относительно Direction
+        public float Speed = 0;                 // начальная минимальная скорость движения частицы
+        public int Size ;                       // минимальный радиус частицы
+        public int Life ;                       // минимальное время жизни частицы
         public int ParticlesPerTick = 1;
         public long tickRate = 30;
         public long tickCount = 0;
-        public int Width; // длина экрана
-        public Color ColorFrom = Color.Black; // начальный цвет частицы
+        public int Width;                       // длина экрана
+        public Color ColorFrom = Color.Black;   // начальный цвет частицы
         public Color ColorTo = Color.FromArgb(0, Color.White); // конечный цвет частиц
-        public string figure ;
+        public string figure ;                  //форма частиц
         public void UpdateState()
         {
             if (tickCount % tickRate == 0)
             {
                 int particlesToCreate = ParticlesPerTick;
-                int i = 0;
+               int i = 0;
                 
                 foreach (var particle in particles)
                 {
+                    //влияние доп точек(окрашивателей)
                     foreach (var point in impactPoints)
                     {
                         point.ImpactParticle(particle);
                     }
-                    i++;
-                    particle.Life--;
                     
+                    particle.Life--;
+                    //если частица умерла
                     if (particle.Life < 0)
                     {
+                        //если нужно создавать  новые частицы
                         if (ParticlesPerTick != 0)
                         {
+                            //то обновляем характеристсики умерших
                             ResetParticle(particle);
-                            particlesRemove.Add(particle);
+                            
                         }
-                        else
-                        {
-                            particlesRemove.Add(particle);
-                        }
-                        if (i % 3 == 0  ) {
-                            particlesRemove.Add(particle);
-                        }
+                        //если нет то удаляем упавшую частицу
+                        particlesRemove.Add(particle);
                     }
                     else
                     {
-
-                        foreach (var point in impactPoints)
-                        {
-                            point.ImpactParticle(particle);
-                        }
+                        //если частица жива,то пусть падает дальше
                         particle.SpeedX += gravitationX;
                         particle.SpeedY += gravitationY;
 
@@ -74,15 +68,17 @@ namespace Курсовая
                         particle.Y += particle.SpeedY;
                     }
                 }
+                //очищение списка от лишних частиц
                 foreach (var particle in particlesRemove)
                 {
                     particles.Remove(particle);
                 }
                 particlesRemove.Clear();
-
+                //пока нужно создавать новые частицы
                 while (particlesToCreate >= 1)
                 {
                     particlesToCreate -= 1;
+                    //создаем новые
                     var particle = CreateParticle();
                     ResetParticle(particle);
                     particles.Add(particle);
@@ -100,7 +96,6 @@ namespace Курсовая
                     }
                     currentHistoryIndex++;
                     ifAdd = true;
-                    
                 }
                 else
                 {
@@ -120,6 +115,7 @@ namespace Курсовая
         public virtual ParticleColorful CreateParticle()
         {
             var particle = new ParticleColorful();
+            //создаем новую частицу исходя из формы 
             switch (figure)
             {
             case "circle":
@@ -147,7 +143,7 @@ namespace Курсовая
             particle.ToColor = ColorTo;
             return particle;
         }
-        // добавил новый метод, виртуальным, чтобы переопределять можно было
+        // заполнение характеристик частицы
         public virtual void ResetParticle(Particle particle)
         {
             particle.Life = Life;
@@ -156,10 +152,9 @@ namespace Курсовая
             particle.SpeedY = -(int)(Math.Sin(direction / 180 * Math.PI) * Speed);
             particle.Size =Size;  
         }
+        //отрисовка
         public void Render(Graphics g)
         {
-            // ну тут так и быть уж сам впишу...
-            // это то же самое что на форме в методе Render
             foreach (var particle in particles)
             {
                 particle.Draw(g);
@@ -169,11 +164,11 @@ namespace Курсовая
                 point.Render(g); // это добавили
             }
         }
-
     }
     public class TopEmitter : Emitter
     {
         public int Width; // длина экрана
+        //заполнение характеристик частиц
         public override void ResetParticle(Particle particle)
         {
             base.ResetParticle(particle); // вызываем базовый сброс частицы, там жизнь переопределяется и все такое

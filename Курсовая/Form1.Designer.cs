@@ -406,7 +406,7 @@
             this.Controls.Add(this.Start);
             this.Controls.Add(this.picDisplay);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Система управления частицами";
             ((System.ComponentModel.ISupportInitialize)(this.tbSpeed)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbSize)).EndInit();

@@ -34,12 +34,16 @@ namespace Курсовая
             this.Life = particle.Life;
             this.Size = particle.Size;
         }
+        //отрисовка
         public virtual void Draw(Graphics g){ }
+        //отрисовка рамки при выделение мышкой
         public virtual void DrawFrame(Graphics g){ }
+        //проверяет попала ли мышка в частицу
         public virtual bool ifMouseInFigure(Graphics g, int xMouse, int yMouse)
         {
             return false;
         }
+        //клонирование частиц
         public virtual Particle Clone() {
             ParticleColorful instanse = (ParticleColorful)Activator.CreateInstance(this.GetType());
             instanse.Size = this.Size;
@@ -50,6 +54,7 @@ namespace Курсовая
             instanse.Life = this.Life;
             return instanse;
         }
+        //вывод информации о них
         public void ShowInfo(Graphics g)
         {
             g.FillRectangle(
@@ -70,9 +75,11 @@ namespace Курсовая
                 );
         }
     }
+    //наследник класса Particle,окрашивает частицы
     public class ParticleColorful : Particle
     {
         public ParticleColorful() { }
+        //клонирование
         public override Particle Clone()
         {
             ParticleColorful instanse = (ParticleColorful)Activator.CreateInstance(this.GetType());
@@ -97,6 +104,7 @@ namespace Курсовая
             this.FromColor = particleColorful.FromColor;
             this.ToColor = particleColorful.ToColor;
         }
+        //смешивание цветов
         public static Color mixColor(Color color1, Color color2, float k)
         {
             return Color.FromArgb(
@@ -107,8 +115,10 @@ namespace Курсовая
                 );
         }
     }
+    //наследник класса ParticleColorful, делает форму частиц кругом
     public class ParticleCircle : ParticleColorful
     {
+        //отрисовка кругов
         public override void Draw(Graphics g)
         {
             float k = Math.Min(1f, Life / 100);
@@ -120,10 +130,12 @@ namespace Курсовая
                 new Point((int)(X + (int)SpeedX),
                 (int)(Y + Size / 4 * 3)));
         }
+        //отрисовка рамки для попадание мышкой в частицу
         public override void DrawFrame(Graphics g)
         {
             g.DrawEllipse(new Pen(Brushes.Black), X - Size,Y - Size,Size * 2,Size * 2);
         }
+        //проверяет попала ли мышка в частицу
         public override bool ifMouseInFigure(Graphics g,int xMouse,int yMouse)
         {
             float gX = xMouse - this.X;
@@ -136,8 +148,10 @@ namespace Курсовая
             return false;
         }
     }
+    //наследник класса ParticleColorful, делает форму частиц квадратом
     public class ParticleSquare : ParticleColorful
     {
+        //отрисовка квадаратов
         public override void Draw(Graphics g)
         {
             float k = Math.Min(1f, Life / 100);
@@ -149,10 +163,12 @@ namespace Курсовая
                new Point((int)(X + Size / 2 + (int)SpeedX),
                (int)(Y + Size / 4 * 3)));
         }
+        //отрисовка рамки для попадание мышкой в частицу
         public override void DrawFrame(Graphics g)
         {
             g.DrawRectangle(new Pen(Color.Black),X, Y, Size, Size);
         }
+        //проверяет попала ли мышка в частицу
         public override bool ifMouseInFigure(Graphics g, int xMouse, int yMouse)
         {
             float centerX = this.X + this.Size / 2;
@@ -166,8 +182,10 @@ namespace Курсовая
             return false;
         }
     }
+    //наследник класса ParticleColorful, делает форму частиц звездой
     public class ParticleStar : ParticleColorful
     {
+        //отрисовка Звезды
         public override void Draw(Graphics g)
         {
             float k = Math.Min(1f, Life / 100);
@@ -187,6 +205,7 @@ namespace Курсовая
                new Point((int)(X + (int)SpeedX),
                (int)(Y + Size / 4 * 3)));
         }
+        //отрисовка рамки для попадание мышкой в частицу
         public override void DrawFrame(Graphics g)
         {
             double alpha = 0;        // поворот
@@ -200,6 +219,7 @@ namespace Курсовая
             }
             g.DrawLines(Pens.Black, points);
         }
+        //проверяет попала ли мышка в частицу
         public override bool ifMouseInFigure(Graphics g, int xMouse, int yMouse)
         {
             float gX = xMouse - this.X;
@@ -212,9 +232,12 @@ namespace Курсовая
             return false;
         }
     }
+    //наследник класса ParticleColorful, делает форму частиц снежинкой
     public class ParticleSnowflake : ParticleColorful
     {
+        //толщина линии из которой строится снежинка
         public float thicknessLines;
+        //клонирование
         public override Particle Clone()
         {
             ParticleSnowflake instanse = (ParticleSnowflake)Activator.CreateInstance(this.GetType());
@@ -229,6 +252,7 @@ namespace Курсовая
             instanse.thicknessLines = this.thicknessLines;
             return instanse;
         }
+        //отрисовка снежинки
         public override void Draw(Graphics g)
         {
             thicknessLines = Size / 15;
@@ -255,10 +279,7 @@ namespace Курсовая
             g.DrawLine(new Pen(mixColor(ToColor, FromColor, k), thicknessLines), new Point(X - (Size / 2), Y), new Point(X - Size, Y - (Size / 2)));
             g.DrawLine(new Pen(Brushes.Green, thicknessLines), new Point((int)X, (int)Y),new Point((int)(X + (int)SpeedX), (int)(Y + Size )));
         }
-        public override void DrawFrame(Graphics g)
-        {
-           
-        }
+        //проверяет попала ли мышка в частицу
         public override bool ifMouseInFigure(Graphics g, int xMouse, int yMouse)
         {
            

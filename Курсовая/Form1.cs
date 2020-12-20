@@ -29,6 +29,7 @@ namespace Курсовая
                 Width = picDisplay.Width,
                 gravitationY = 5
             };
+            //задаем начальные значения частиц исходя из начальных значений трекбаров
             emitter.Size = tbSize.Value * 5;
             emitter.Life = 10 * tbLife.Value;
             emitter.ParticlesPerTick = tbNumber.Value;
@@ -37,9 +38,10 @@ namespace Курсовая
         
         private void timer1_Tick(object sender, EventArgs e)
         {
-            
+            //если пользователь задал скорость больше 0
             if ((tbSpeed.Value != 0 && ifRun) || stepPermission)
             {
+                //то выполняем остальное
                 emitter.UpdateState();
             }
             using (var g = Graphics.FromImage(picDisplay.Image))
@@ -50,6 +52,7 @@ namespace Курсовая
                 {
                     if (particle.ifMouseInFigure(g, xMouse ,yMouse))
                     {
+                        //если мышка попала в частицу,то рисуем рамку вокруг частицы и выводим информацию
                         particle.DrawFrame(g);
                         particle.ShowInfo(g);
                     }
@@ -58,6 +61,7 @@ namespace Курсовая
             picDisplay.Invalidate();
             stepPermission = false;
         }
+        //количество тиков
         private void ChangeTick()
         {
             switch (tbSpeed.Value)
@@ -161,6 +165,7 @@ namespace Курсовая
         {
             emitter.Size = 5 * tbSize.Value;
         }
+        //рандомный цвет частиц
         private void RandomColorParticles_Click(object sender, EventArgs e)
         {
             Random random = new Random();
@@ -170,6 +175,7 @@ namespace Курсовая
             emitter.ColorFrom = Color.FromArgb(R, G, B);
             emitter.ColorTo = colorPicture;
         }
+        //рандомный цвет фона
         private void RandomColorPictures_Click(object sender, EventArgs e)
         {
             Random random = new Random();
@@ -180,6 +186,7 @@ namespace Курсовая
             colorPicture = Color.FromArgb(R, G, B);
             emitter.ColorTo = colorPicture;
         }
+        //Выбрать цвет частиц
         private void ColorParticles_Click(object sender, EventArgs e)
         {
             ColorDialog MyDialog = new ColorDialog();
@@ -189,6 +196,7 @@ namespace Курсовая
                 emitter.ColorFrom = MyDialog.Color;
             emitter.ColorTo = colorPicture;
         }
+        //Выбрать цвет фона
         private void ColorPictures_Click(object sender, EventArgs e)
         {
             ColorDialog MyDialog = new ColorDialog();
@@ -201,6 +209,7 @@ namespace Курсовая
         }
         private void cmbForm_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //комбобокс-для формы частиц
             switch (cmbForm.Text)
             {
                 case "Круг":
@@ -216,6 +225,7 @@ namespace Курсовая
                     emitter.figure = "snowflake";
                     break;
             }
+            //очистка всех списков,сверка количества
             emitter.particles.Clear();
             emitter.particlesHistory.Clear();
             emitter.currentHistoryIndex = 0;
@@ -227,14 +237,17 @@ namespace Курсовая
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+            //комбобокс-для режима работы
             switch (comboBox1.Text) {
             case "Простой":
                 {
+                        //отключение влияния точек-окрашивателей
                     emitter.impactPoints.Clear();
                 }
                 break;
             case "Окрашивание":
                 {
+                        //создание точек-окрашивателей
                     float w = picDisplay.Width / 7;
                     emitter.impactPoints.Add(new ColorPoint
                     { 

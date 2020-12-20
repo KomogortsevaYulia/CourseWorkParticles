@@ -24,7 +24,7 @@ namespace Курсовая
     }
     public class ColorPoint : IImpactPoint
     {
-        // а сюда по сути скопировали с минимальными правками то что было в UpdateState
+        // изменение цвета цастиц,которые попали в область влияние Цветовых областей
         public override void ImpactParticle(ParticleColorful particle)
         {
             if (particle.X >= 0 & particle.X <= width & particle.Y >= YBegin & particle.Y <= YBegin+ height)
